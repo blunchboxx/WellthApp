@@ -120,6 +120,7 @@ class _HomePageState extends State<HomePage> {
                                     //time: post[], 
                                     //update to username
                                     user: post['UserEmail'],
+                                    currentProfileUser: currentUser.email.toString(),
                                   );
                                 }
                               );

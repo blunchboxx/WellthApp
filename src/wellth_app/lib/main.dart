@@ -3,6 +3,10 @@ import 'package:firebase_core/firebase_core.dart';                  // Added fro
 import 'package:flutter/material.dart';
 import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/home.dart';
+import 'package:wellth_app/pages/custom_login_page.dart';
+import 'package:wellth_app/pages/register_page.dart';
+
+
 
 import 'app.dart';
 import 'firebase_options.dart'; 
@@ -31,6 +35,10 @@ class MyApp extends StatelessWidget {
     // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/register': (context) => RegisterPage(), // Register page route
+        '/login': (context) => CustomLoginPage(), // Custom login page route
+      },
       home: AuthPage(),
 
       //temp to setup register page - need to implement routes

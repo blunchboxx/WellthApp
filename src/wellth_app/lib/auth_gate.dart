@@ -22,7 +22,7 @@ class AuthGate extends StatelessWidget {
         if (!snapshot.hasData) {
 
           
-          //return CustomLoginPage(onTap: togglePages,);
+          return const CustomLoginPage();
 
         }
         // Otherwise, show the home screen

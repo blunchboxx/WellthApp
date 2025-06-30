@@ -4,39 +4,23 @@ class WallPost extends StatelessWidget{
   final String message;
   final String user;
   //final String time;
+  final String currentProfileUser; //---->remove for community posting?
 
   const WallPost({
     super.key,
     required this.message,
     //required this.time, --> time for community posts
     required this.user,
+    required this.currentProfileUser,
   });
-
-  @override
-  /*Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          //width: double.infinity,
-          //height: double.infinity,
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,   // push to bottom
-            crossAxisAlignment: CrossAxisAlignment.center, // center horizontally
-            children: [
-              Text(user,),
-              Text(message,),
-              SizedBox(height: 30), // space from bottom
-            ],
-          ),
-        ),
-      ),
-    );
-  }*/
 
 
   @override
   Widget build(BuildContext context) {
+    // Only show post if it belongs to the profile being viewed
+    if (user != currentProfileUser) {
+      return const SizedBox.shrink(); // Renders nothing
+    }
     return Container(
       height: 550,
       decoration: BoxDecoration(

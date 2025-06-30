@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/pages/home_page.dart';
+import 'package:wellth_app/pages/custom_login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class AuthPage extends StatelessWidget{
   const AuthPage({super.key});
@@ -19,10 +22,28 @@ class AuthPage extends StatelessWidget{
           }
           //user not logged in
           else{
-            return const LoginOrRegister();
+            return  const CustomLoginPage();
           }
         }
         )
     );
   }
+}
+
+// lib/services/auth_service.dart
+
+class AuthService {
+  final _auth = FirebaseAuth.instance;
+
+  
+
+  Future<UserCredential> signInWithEmail(String email, String password) {
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  Future<UserCredential> registerWithEmail(String email, String password) {
+    return _auth.createUserWithEmailAndPassword(email: email, password: password);
+  }
+
+  // ... any other auth methods
 }

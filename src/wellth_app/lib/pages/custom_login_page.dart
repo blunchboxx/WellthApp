@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wellth_app/components/gradient-button.dart';
+import 'package:wellth_app/app.dart';
+import 'package:wellth_app/main.dart';
+import 'package:wellth_app/auth/auth.dart';
 
 class CustomLoginPage extends StatefulWidget {
   //Geens Modifications
-  final Function()? onTap;
 
   /// Pass your Google OAuth clientId here.
   /// Added required on tap - geena
-  const CustomLoginPage({super.key, required this.onTap});
+  const CustomLoginPage({super.key});
   //final String clientId;
 
   @override
@@ -19,58 +21,48 @@ class CustomLoginPage extends StatefulWidget {
 }
 
 class _CustomLoginPageState extends State<CustomLoginPage> {
+  final _auth = AuthService();
   final _emailCtrl = TextEditingController();
   final _pwCtrl    = TextEditingController();
   bool _loading    = false;
   String? _error;
 
   void _signInWithGoogle() async{
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+      // Navigate to home page or do something after successful sign-in
+    }).catchError((error) {
+      // Handle error
+      displayMessage(error.toString());
+    });
+    
 
   }
 
   //sign in users
-  void _signIn() async {
-    // show laoding circle
-    showDialog(
-      context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),),
-    );
-
-  setState(() {
-    _loading = true;
-    _error = null;
-  });
-  if(_pwCtrl.text.trim().isEmpty){
-      //pop loading cirlce
-      if (context.mounted) Navigator.pop(context);
-      //show error to user
-      displayMessage("Please enter a password");
-      return;
+    Future<void> signIn() async {
+    setState(() => _loading = true);
+  
+    try {
+      await _auth.signInWithEmail(
+         _emailCtrl.text.trim(),
+         _pwCtrl.text.trim(),
+      );
+      // Handle successful sign-in (e.g., update state, navigate, etc.)
+    } on FirebaseAuthException catch (e) {
+      setState(() => _error = e.message);
+      // Optionally: call a callback or set a variable to show the error in the UI
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
-
-  try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _emailCtrl.text.trim(),
-      password: _pwCtrl.text.trim(),
-    );
-    // pop loading circle
-    if (context.mounted) Navigator.pop(context);
-  } on FirebaseAuthException catch (e) {
-    // pop loading circle
-    if (context.mounted) Navigator.pop(context);
-    displayMessage(e.code);
-    if (!mounted) return;
-    setState(() {
-      _error = e.message;
-    });
-  } finally {
-    if (!mounted) return;
-    setState(() {
-      _loading = false;
-    });
   }
-}
 
 // display dialog message
 void displayMessage (String message){
@@ -95,14 +87,11 @@ void displayMessage (String message){
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-            onTap: () 
-            {
-            // dismisses the keyboard by removing focus from the current FocusNode
-              FocusScope.of(context).unfocus();
-            },
-        
-        
+          behavior: HitTestBehavior.translucent, // Use translucent to ensure background taps are detected
+          onTap: () {
+            // Dismisses the keyboard by removing focus from the current FocusNode
+            FocusScope.of(context).unfocus();
+          },
       
       child: SafeArea(
       child: SingleChildScrollView(
@@ -329,7 +318,7 @@ void displayMessage (String message){
                             ),
                             padding: EdgeInsets.zero, // Remove default padding
                           ),
-                          onPressed: _loading ? null : _signIn,
+                          onPressed: _loading ? null : signIn,
                           child: _loading
                             ? const SizedBox(
                               height: 1,
@@ -398,11 +387,9 @@ void displayMessage (String message){
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 
-                                GestureDetector(
-                                  onTap: widget.onTap,
-                                  child: const Text('Create an account',style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
-                                ),
-                                /*TextButton(
+                                
+                                
+                                TextButton(
                                   onPressed: () => Navigator.of(context).pushNamed('/register'),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
@@ -417,7 +404,7 @@ void displayMessage (String message){
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),*/
+                                ),
           
                                 Transform.translate(
                                   offset: const Offset(0, -2), 
