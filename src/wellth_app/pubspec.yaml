@@ -62,7 +62,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
   
 # For information on the generic Dart part of this file, see the
@@ -86,6 +86,9 @@ flutter:
       - assets/dash.png
       - assets/Wellth logo.png
       - assets/wellthlogo fin.png
+      - assets/profile-background.jpeg
+      - assets/profile-picture-border.png
+      - assets/google.png
       - assets/google_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

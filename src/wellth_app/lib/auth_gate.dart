@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'custom_login_page.dart';
+import 'package:wellth_app/pages/register_page.dart';
+import 'pages/custom_login_page.dart';
 import 'home.dart';
+import 'auth/login_or_register.dart';
 
 /// Wraps your app and decides whether to show the login page or HomeScreen.
 class AuthGate extends StatelessWidget {
@@ -9,6 +11,7 @@ class AuthGate extends StatelessWidget {
 
   /// Your Google OAuth client ID from the Firebase console
   final String clientId;
+  //final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +20,14 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         // If the user is NOT signed in, show the custom login page
         if (!snapshot.hasData) {
-          return CustomLoginPage(clientId: clientId);
+
+          
+          //return CustomLoginPage(onTap: togglePages,);
+
         }
         // Otherwise, show the home screen
         return const HomeScreen();
+        
       },
     );
   }
