@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wellth_app/components/gradient-button.dart';
+import 'package:wellth_app/main.dart';
+import 'package:wellth_app/pages/custom_login_page.dart';
+import 'package:wellth_app/auth/auth.dart';
 
 
 class RegisterPage extends StatefulWidget{
-  final Function()? onTap;
-  const RegisterPage({required this.onTap});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State <RegisterPage>{
-
+    final _auth = AuthService();
   final _emailCtrl             = TextEditingController();
   final _pwCtrl                = TextEditingController();
   final _pwCtrlConfirmation    = TextEditingController();
@@ -60,21 +62,15 @@ class _RegisterPageState extends State <RegisterPage>{
 
     );
     // pop loading circle
-    if (context.mounted) Navigator.pop(context);
+    if (mounted) Navigator.of(context).pop();
+
+    // now pop the RegisterPage itself
+    if (mounted) Navigator.of(context).pop();
   } on FirebaseAuthException catch (e) {
-    // pop loading circle
-    if (context.mounted) Navigator.pop(context);
-    displayMessage(e.code);
-    if (!mounted) return;
-    setState(() {
-      _error = e.message;
-    });
-  } finally {
-    if (!mounted) return;
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) Navigator.of(context).pop();
+    displayMessage(e.message ?? e.code);
   }
+  // …
 }
 
 // display dialog message
@@ -130,7 +126,7 @@ void displayMessage (String message){
             Container(
               
               width: 360,
-              height: 500,
+              height: 490,
               padding: const EdgeInsets.all(1),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -353,7 +349,17 @@ void displayMessage (String message){
                           //child: Align(
                             //alignment: Alignment.center,
                             MyGradientbutton(
-                              onTap: signUp, 
+                              onTap: ()
+                              {
+                                
+                                signUp();
+ 
+                                // Navigate to the home page after successful sign-up
+                                //Navigator.pushNamed(context, '/home');
+                                
+
+
+                              } , 
                               text: 'Sign Up'
                             ),
 
@@ -413,26 +419,41 @@ void displayMessage (String message){
                     ),
                     const SizedBox(height: 30),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height:0 ),
                     const Divider(),
-                    const SizedBox(height: 0),
+                    const SizedBox(height: 9),
                 
                     // --- Footer link ---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already a member?',style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
-                        GestureDetector(
-                          onTap: widget.onTap,
-                          child: const Text(' Login now',style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
-                        ),
-                      ],
+                        const Text('Already a member?   ' ,style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
+                        TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/login'); // Navigate to login page
+                                  },
+                          
+                         style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,  // removes default button padding
+                                  ),
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(145, 0, 0, 0),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                        
+                    )],
                     ),
                     Transform.translate(
                       offset: const Offset(70, -1.2), 
                       child: Container(
                         height: 2,       
-                        width: 73,      
+                        width: 42,      
                         decoration: BoxDecoration(
                           gradient: gradient2.withOpacity(0.42),
                           borderRadius: BorderRadius.circular(1),

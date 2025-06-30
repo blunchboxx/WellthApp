@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:wellth_app/pages/register_page.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 
@@ -31,3 +31,4 @@ class _LoginOrRegisterState extends State<LoginOrRegister>{
     }
   }
 }
+*/

@@ -40,10 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/register': (context) => RegisterPage(onTap: (){},), // Register page route
-        '/login': (context) => CustomLoginPage(onTap: (){},), // Custom login page route
-      },
+      
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white, surface: Colors.white),
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
