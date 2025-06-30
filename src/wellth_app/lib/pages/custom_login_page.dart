@@ -24,8 +24,12 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
   bool _loading    = false;
   String? _error;
 
+  void _signInWithGoogle() async{
+
+  }
+
   //sign in users
-  void signIn() async {
+  void _signIn() async {
     // show laoding circle
     showDialog(
       context: context,
@@ -273,7 +277,6 @@ void displayMessage (String message){
                           ),
                         ),
                         ),
-<<<<<<< HEAD:src/wellth_app/lib/custom_login_page.dart
                       const SizedBox(height: 26),
                 
                       // --- Error message ---
@@ -394,7 +397,12 @@ void displayMessage (String message){
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextButton(
+                                
+                                GestureDetector(
+                                  onTap: widget.onTap,
+                                  child: const Text('Create an account',style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
+                                ),
+                                /*TextButton(
                                   onPressed: () => Navigator.of(context).pushNamed('/register'),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
@@ -409,7 +417,7 @@ void displayMessage (String message){
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),
+                                ),*/
           
                                 Transform.translate(
                                   offset: const Offset(0, -2), 
@@ -431,105 +439,6 @@ void displayMessage (String message){
           
                     
                     
-=======
-                      ),
-                      ),
-                    ),
-                    ),
-                  const SizedBox(height: 16),
-
-                  // --- Error message ---
-                  if (_error != null) ...[
-                    Text(
-                      _error!,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-
-                  // --- Gradient “Log in” button ---
-                  MyGradientbutton(
-                    onTap: signIn, 
-                    text: 'Log in'
-                    ),
-                    SizedBox(height: 16),
-                  /*DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: gradient,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 32),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: null,
-                      child: _loading
-                          ? const SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Log in', style: const TextStyle(color: Colors.black)),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),*/
-
-                  // --- Google Sign‐in button ---
-                  ElevatedButton.icon(
-                    /*icon: Image.asset(
-                      'assets/google_logo.png',
-                      height: 24,
-                      width: 24,
-                    ),*/
-                    label: const Text('Continue with Google',style: const TextStyle(color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                    ),
-                    onPressed: null,
-                  ),
-
-                  const SizedBox(height: 24),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  // --- Footer link ---
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('New member?'),
-
-                      //----------Geens Modifications----------//
-                      GestureDetector(
-                        onTap: widget.onTap,
-                        child: const Text(' Create an account',style: const TextStyle(color: Colors.blue)),
-                      ),
-                      /*TextButton(
-                        onPressed: () async {
-                          try {
-
-                            // Navigate to profile setup
-                            Navigator.pushReplacementNamed(context, '/register');
-                          } catch (e) {
-                            print("Registration error: $e");
-                            // Handle error (e.g., show snackbar)
-                          }
-                        },*///temp comment out till here
-
-                        //child: const Text('Create an account'),
-                      //),
->>>>>>> 7073828e9725a01249303271c290aae540f226d0:src/wellth_app/lib/pages/custom_login_page.dart
                     ],
                   ),
                 ),

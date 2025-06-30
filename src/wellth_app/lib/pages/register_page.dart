@@ -199,7 +199,7 @@ void displayMessage (String message){
                           controller: _emailCtrl,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
-                            labelText: 'Email',
+                            hintText: 'Email',
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -231,7 +231,7 @@ void displayMessage (String message){
                         controller: _pwCtrl,
                         obscureText: true,
                         decoration: const InputDecoration(
-                        labelText: 'Create Password',
+                        hintText: 'Create Password',
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -263,7 +263,7 @@ void displayMessage (String message){
                           controller: _pwCtrlConfirmation,
                           obscureText: true,
                           decoration: const InputDecoration(
-                            labelText: 'Confirm Password',
+                            hintText: 'Confirm Password',
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -295,7 +295,7 @@ void displayMessage (String message){
                           controller: _usernameCtr,
                           keyboardType: TextInputType.name,
                           decoration: const InputDecoration(
-                            labelText: 'Username',
+                            hintText: 'Username',
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
