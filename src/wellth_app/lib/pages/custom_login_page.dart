@@ -38,6 +38,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
 
     return FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       // Navigate to home page or do something after successful sign-in
+      Navigator.of(context).pushNamed('/userProfile');
     }).catchError((error) {
       // Handle error
       displayMessage(error.toString());
@@ -55,6 +56,8 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
          _emailCtrl.text.trim(),
          _pwCtrl.text.trim(),
       );
+
+      Navigator.of(context).pushNamed('/userProfile');
       // Handle successful sign-in (e.g., update state, navigate, etc.)
     } on FirebaseAuthException catch (e) {
       setState(() => _error = e.message);

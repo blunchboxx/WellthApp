@@ -64,8 +64,9 @@ class _RegisterPageState extends State <RegisterPage>{
     // pop loading circle
     if (mounted) Navigator.of(context).pop();
 
-    // now pop the RegisterPage itself
-    if (mounted) Navigator.of(context).pop();
+    // Navigate to user information page
+    Navigator.pushReplacementNamed(context,'/userInformation');
+
   } on FirebaseAuthException catch (e) {
     if (mounted) Navigator.of(context).pop();
     displayMessage(e.message ?? e.code);
@@ -73,6 +74,42 @@ class _RegisterPageState extends State <RegisterPage>{
   // …
 }
 
+void signUpWithGoogle() async {
+  // show laoding circle
+  showDialog(
+    context: context,
+    builder: (context) => const Center(
+      child: CircularProgressIndicator(),),
+  );
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      // The user canceled the sign-in
+      return;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in with Firebase using the Google credentials
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // pop loading circle
+    if (mounted) Navigator.of(context).pop();
+
+    // Navigate to user information page
+    Navigator.pushReplacementNamed(context, '/userInformation');
+
+  } catch (error) {
+    // Handle error
+    displayMessage(error.toString());
+  }
+}
 // display dialog message
 void displayMessage (String message){
   showDialog(
@@ -126,7 +163,7 @@ void displayMessage (String message){
             Container(
               
               width: 360,
-              height: 490,
+              height: 390,
               padding: const EdgeInsets.all(1),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -232,7 +269,7 @@ void displayMessage (String message){
                         ),
                       ),
                     ),
-                    const SizedBox(height: 37),
+                    const SizedBox(height: 24),
                 
                     // --- Password field with gradient border ---
                       Align(
@@ -299,7 +336,7 @@ void displayMessage (String message){
                     const SizedBox(height: 24),
                 
                     // --- Username field with gradient border ---
-                    Align(
+                    /*Align(
                       alignment: Alignment(-0.9, 0),
                       child: Container(
                         height: 38,
@@ -327,8 +364,8 @@ void displayMessage (String message){
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                    ),*/
+                    //
                 
                     // --- Error message ---
                     if (_error != null) ...[
@@ -342,14 +379,14 @@ void displayMessage (String message){
                     // --- Gradient “Sign Up” button ---
                 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         //Flexible(
                           //flex: 7,
                           //child: Align(
                             //alignment: Alignment.center,
                             MyGradientbutton(
-                              onTap: ()
+                              onPressed: ()
                               {
                                 
                                 signUp();
@@ -375,7 +412,25 @@ void displayMessage (String message){
                           
                         //),
                         //const SizedBox(width: 16,),
-                        Flexible(
+
+                        ElevatedButton.icon(
+                        icon: Image.asset(
+                          'assets/google_logo.png',
+                          height: 32.38,
+                          width: 32.38,
+                        ),
+          
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.transparent, 
+                          padding: EdgeInsets.zero, 
+                        ),
+                        label: const Text(''),
+                        onPressed: _loading ? null : signUpWithGoogle,
+                        ),
+
+                        /*Flexible(
                           // --- Google Sign‐up button ---
                           flex: 8,
                           child: Align(
@@ -387,7 +442,7 @@ void displayMessage (String message){
                               width: 32.38,
                             ),
                             onPressed: (){
-                              print('Google Icone button pressed');
+                              onPressed: _loading ? null : signUpWithGoogle,
                             },
                           ),
                           ),
@@ -414,20 +469,26 @@ void displayMessage (String message){
                           const SizedBox(height: 24),
                           const Divider(),
                           const SizedBox(height: 8), */
-                        ),
+                        ),*/
                       ],
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 16),
 
-                    const SizedBox(height:0 ),
+                    //const SizedBox(height:0 ),
                     const Divider(),
-                    const SizedBox(height: 9),
+                    //const SizedBox(height: 9),
                 
                     // --- Footer link ---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already a member?   ' ,style: const TextStyle(color: Color.fromARGB(145, 0, 0, 0))),
+                        const Text(
+                          'Already a member?   ' ,
+                          style: const TextStyle(
+                            color: Color.fromARGB(145, 0, 0, 0),
+                            fontWeight: FontWeight.w500,
+                          )
+                        ),
                         TextButton(
                                   onPressed: () {
                                     Navigator.pushNamed(context, '/login'); // Navigate to login page
@@ -440,7 +501,7 @@ void displayMessage (String message){
                                     visualDensity: VisualDensity.compact,  // removes default button padding
                                   ),
                                   child: const Text(
-                                    'Login',
+                                    'Log in',
                                     style: TextStyle(
                                       color: Color.fromARGB(145, 0, 0, 0),
                                       fontWeight: FontWeight.w500,
@@ -450,10 +511,10 @@ void displayMessage (String message){
                     )],
                     ),
                     Transform.translate(
-                      offset: const Offset(70, -1.2), 
+                      offset: const Offset(72, -1.2), 
                       child: Container(
                         height: 2,       
-                        width: 42,      
+                        width: 46,      
                         decoration: BoxDecoration(
                           gradient: gradient2.withOpacity(0.42),
                           borderRadius: BorderRadius.circular(1),

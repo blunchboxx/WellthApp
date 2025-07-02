@@ -13,6 +13,8 @@ import 'firebase_options.dart';
 import 'pages/custom_login_page.dart';
 import 'pages/register_page.dart';
 import 'package:wellth_app/auth/auth.dart';
+import 'pages/home_page.dart';
+import 'pages/user_information.dart';
 
 // Added from codelab
 
@@ -35,9 +37,13 @@ class MyApp extends StatelessWidget {
     // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //home: UserInformationPage(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route
+        '/userInformation': (context) => UserInformationPage(),
+        '/userProfile': (context) => HomePage()
+      
       },
       home: AuthPage(),
 

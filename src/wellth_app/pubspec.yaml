@@ -90,6 +90,7 @@ flutter:
       - assets/profile-picture-border.png
       - assets/google.png
       - assets/google_logo.png
+      - assets/profile-picture-border.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

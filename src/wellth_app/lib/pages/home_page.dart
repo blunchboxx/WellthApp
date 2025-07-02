@@ -87,7 +87,47 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // profile picture
+Stack(
 
+      alignment: Alignment.center,
+      children: [
+        // Background image
+        Image.asset(
+          "assets/profile-picture-border.png",
+          width: 200,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+
+        // Positioned Profile Picture with black & white outline
+        Positioned(
+          bottom: 30, 
+          left: 20,
+          child: Container(
+            padding: const EdgeInsets.all(4), // Black outer ring
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(4), // White inner ring
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              child: CircleAvatar(
+                radius: 63,
+                child: Icon(
+                  Icons.person,
+                  size:40,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
 
                     //logged in as -- should display username will implement later
                     Container(
