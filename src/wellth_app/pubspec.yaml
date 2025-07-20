@@ -47,6 +47,7 @@ dependencies:
   firebase_ui_localizations: ^1.14.0
   google_fonts: ^6.2.1
   cloud_firestore: ^5.6.9
+  carousel_slider: ^5.1.1
 
 
   
@@ -91,6 +92,16 @@ flutter:
       - assets/google.png
       - assets/google_logo.png
       - assets/profile-picture-border.png
+      - assets/onboarding-add-pfp.png
+      - assets/image-icon.png
+      - assets/onboarding-permissions.png
+      - assets/location-permission-icon.png
+      - assets/contacts-permission-icon.png
+      - assets/location-permission-accepted.png
+      - assets/contacts-permission-accepted.png
+      - assets/img1-car.png
+      - assets/img2-car.png
+      - assets/img3-car.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

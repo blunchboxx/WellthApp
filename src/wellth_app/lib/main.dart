@@ -5,6 +5,7 @@ import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/home.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:wellth_app/pages/register_page.dart';
+import 'package:wellth_app/pages/information_carousel.dart';
 
 
 
@@ -14,7 +15,11 @@ import 'pages/custom_login_page.dart';
 import 'pages/register_page.dart';
 import 'package:wellth_app/auth/auth.dart';
 import 'pages/home_page.dart';
-import 'pages/user_information.dart';
+import 'pages/onboarding_page_bio.dart';
+import 'pages/onboarding_page_permissions.dart';
+import 'pages/onboarding_page_carousel_circles.dart';
+import 'pages/onboarding_page_carousel_habits.dart';
+import 'pages/information_carousel.dart';
 
 // Added from codelab
 
@@ -38,14 +43,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: UserInformationPage(),
+      home: GradientPageSlider(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route
-        '/userInformation': (context) => UserInformationPage(),
-        '/userProfile': (context) => HomePage()
+        '/userInformation': (context) => OnboardingScreen_bio(),
+        '/userPermission': (context) => OnboardingScreen_permissions(),
+        '/userProfile': (context) => HomePage(),
+
+        '/informationCarousel': (context) => GradientPageSlider(),
+        '/carouselCircles': (context) => OnboardingScreen_carousel_circles(),
+        '/carouselHabits': (context) => OnboardingScreen_carousel_habits(),
       
       },
-      home: AuthPage(),
+      //home: AuthPage(),
 
       //temp to setup register page - need to implement routes
 
