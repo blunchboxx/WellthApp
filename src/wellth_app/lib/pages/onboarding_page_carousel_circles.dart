@@ -29,7 +29,7 @@ class _OnboardingScreen_carousel_circles extends State<OnboardingScreen_carousel
   final gradientBlueOrange = const LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color.fromARGB(100, 28, 179, 230), Color.fromARGB(100,54, 121, 232), Color.fromARGB(100,122, 66, 189),Color.fromARGB(100,169, 56, 165),Color.fromARGB(100,221, 57, 116),Color.fromARGB(100,243, 93, 55)],
+    colors: [Color.fromARGB(255, 28, 179, 230), Color.fromARGB(255,54, 121, 232), Color.fromARGB(255,122, 66, 189),Color.fromARGB(255,169, 56, 165),Color.fromARGB(255,221, 57, 116),Color.fromARGB(255,243, 93, 55)],
   );
 
   @override
