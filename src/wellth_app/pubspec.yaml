@@ -47,7 +47,8 @@ dependencies:
   firebase_ui_localizations: ^1.14.0
   google_fonts: ^6.2.1
   cloud_firestore: ^5.6.11
-
+  percent_indicator: ^4.2.3
+  flutter_custom_clippers: ^2.1.0
 
   
 
@@ -91,6 +92,12 @@ flutter:
       - assets/google.png
       - assets/google_logo.png
       - assets/profile-picture-border.png
+      - assets/badge_icon.png
+      - assets/shield_icon.png
+      - assets/tasks_logo.png
+      - assets/user_avatar.png
+      - assets/feed.png
+      - assets/board_logo.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
