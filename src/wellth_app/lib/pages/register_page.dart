@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wellth_app/components/gradient-button.dart';
 import 'package:wellth_app/main.dart';
@@ -17,11 +18,11 @@ class RegisterPage extends StatefulWidget{
 }
 
 class _RegisterPageState extends State <RegisterPage>{
-    final _auth = AuthService();
+    //final _auth = AuthService();
   final _emailCtrl             = TextEditingController();
   final _pwCtrl                = TextEditingController();
   final _pwCtrlConfirmation    = TextEditingController();
-  final _usernameCtr           = TextEditingController();
+  //final _usernameCtr           = TextEditingController();
   bool _loading    = false;
   String? _error;
 
@@ -56,18 +57,29 @@ class _RegisterPageState extends State <RegisterPage>{
   });
 
   try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _emailCtrl.text.trim(),
-      password: _pwCtrl.text.trim(),
+  // Register the user
+  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    email: _emailCtrl.text,
+    password: _pwCtrl.text,
+  );
 
-    );
-    // pop loading circle
-    if (mounted) Navigator.of(context).pop();
+  // Force sign-in again to ensure currentUser is set
+  // Now currentUser is guaranteed to be valid
+  await FirebaseAuth.instance.signInWithEmailAndPassword(
+    email: _emailCtrl.text,
+    password: _pwCtrl.text,
+  );
 
-    // Navigate to user information page
-    Navigator.pushReplacementNamed(context,'/userInformation');
+  // Create user Firestore database document
+  await createUserProfile();
 
-  } on FirebaseAuthException catch (e) {
+  // Dismiss loading circle
+  if (context.mounted) Navigator.pop(context);
+
+  // Navigate to User Information Page
+  Navigator.pushReplacementNamed(context, '/userInformation');
+  
+} on FirebaseAuthException catch (e) {
     if (mounted) Navigator.of(context).pop();
     displayMessage(e.message ?? e.code);
   }
@@ -118,6 +130,32 @@ void displayMessage (String message){
       title: Text(message),
     ),
   );
+}
+
+// User database registration function
+// Checks if user is already registered in database
+// Adds user if not already added
+Future<void> createUserProfile() async {
+  final user = FirebaseAuth.instance.currentUser;
+  final userRef = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+
+  final userDoc = await userRef.get();
+
+  if (!userDoc.exists) {
+    await userRef.set({
+      'email': user.email,
+      'username': "", // To be collected later in user_information
+      'firstName': "",
+      'lastName': "",
+      'age': -1,
+      'bio': "",
+      'createdAt': FieldValue.serverTimestamp(),
+      // 'preferences': {
+      //   'notifications': true,
+      //   'theme': 'light'
+      // },
+    });
+  }
 }
 
   @override
@@ -333,39 +371,7 @@ void displayMessage (String message){
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                
-                    // --- Username field with gradient border ---
-                    /*Align(
-                      alignment: Alignment(-0.9, 0),
-                      child: Container(
-                        height: 38,
-                        width: 270,
-                        decoration: BoxDecoration(
-                          gradient: gradient.withOpacity(0.27),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.all(2), // Border thickness
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: TextField(
-                            controller: _usernameCtr,
-                            keyboardType: TextInputType.name,
-                            decoration: const InputDecoration(
-                              hintText: 'Username',
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),*/
-                    //
+                    const SizedBox(height: 24),         
                 
                     // --- Error message ---
                     if (_error != null) ...[
@@ -392,9 +398,7 @@ void displayMessage (String message){
                                 signUp();
  
                                 // Navigate to the home page after successful sign-up
-                                //Navigator.pushNamed(context, '/home');
-                                
-
+                                //Navigator.pushNamed(context, '/home');                              
 
                               } , 
                               text: 'Sign Up'
@@ -408,9 +412,7 @@ void displayMessage (String message){
                               height: 28,
                               color: Color.fromARGB(59, 127, 111, 111),
                             ),
-                          //)
-                          
-                        //),
+
                         //const SizedBox(width: 16,),
 
                         ElevatedButton.icon(
@@ -429,47 +431,6 @@ void displayMessage (String message){
                         label: const Text(''),
                         onPressed: _loading ? null : signUpWithGoogle,
                         ),
-
-                        /*Flexible(
-                          // --- Google Sign‐up button ---
-                          flex: 8,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: IconButton(
-                            icon: Image.asset(
-                              'assets/google_logo.png',
-                              height: 32.38,
-                              width: 32.38,
-                            ),
-                            onPressed: (){
-                              onPressed: _loading ? null : signUpWithGoogle,
-                            },
-                          ),
-                          ),
-                          
-                          
-                          /*ElevatedButton.icon(
-                            /*icon: Image.asset(
-                              'assets/google.png',
-                              height: 50,
-                              width: 50,
-                            ),*/
-                            label: const Text('Sign Up with Google',style: const TextStyle(color: Colors.black)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black87,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                            ),
-                            onPressed: null,
-                          ),
-                
-                          const SizedBox(height: 24),
-                          const Divider(),
-                          const SizedBox(height: 8), */
-                        ),*/
                       ],
                     ),
                     const SizedBox(height: 16),
