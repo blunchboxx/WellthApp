@@ -7,6 +7,7 @@ import 'package:wellth_app/components/gradient-button.dart';
 import 'package:wellth_app/app.dart';
 import 'package:wellth_app/main.dart';
 import 'package:wellth_app/auth/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInformationPage extends StatefulWidget {
   const UserInformationPage({super.key});
@@ -17,16 +18,39 @@ class UserInformationPage extends StatefulWidget {
 
 class _UserInformationPage extends State <UserInformationPage>{
 
-  void finishSignUp() async {
-    Navigator.pushReplacementNamed(context, '/userProfile');
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
   }
 
-  final _auth = AuthService();
+  void finishSignUp() async {
+    Navigator.pushReplacementNamed(context, '/userProfile');    
+  }
+
+  void loadUserData() async { // Loads existing user data from database
+    final user = FirebaseAuth.instance.currentUser;
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+
+    if (doc.exists) {
+      final data = doc.data()!;
+      setState(() {
+        _firstName.text = data['firstName'] ?? '';
+        _lastName.text = data['lastName'] ?? '';
+        _userName.text = data['username'] ?? '';
+        _bio.text = data['bio'] ?? '';
+        // _dateOfBirth.text = data['dateOfBirth'] ?? ''; // If you add DOB later
+      });
+    }
+  }
+
+  //final _auth = AuthService();
   final _firstName = TextEditingController();
   final _lastName    = TextEditingController();
   final _userName = TextEditingController();
   final _bio    = TextEditingController();
-  bool _loading    = false;
+  final _dateOfBirth    = TextEditingController();
+  //bool _loading    = false;
   String? _error;
   
   @override
@@ -307,21 +331,28 @@ class _UserInformationPage extends State <UserInformationPage>{
                           //flex: 7,
                           //child: Align(
                             //alignment: Alignment.center,
-                            MyGradientbutton(
-                              onPressed: ()
-                              {
-                                
-                                finishSignUp();
- 
-                                // Navigate to the home page after successful sign-up
-                                //Navigator.pushNamed(context, '/home');
-                                
+                              MyGradientbutton(
+                                onPressed: () async {
+                                  final user = FirebaseAuth.instance.currentUser;
 
+                                  try {
+                                    await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
+                                      'firstName': _firstName.text,
+                                      'lastName': _lastName.text,
+                                      'username': _userName.text,
+                                      'bio': _bio.text,
+                                      // 'dateOfBirth': _dateOfBirth.text, // Optional
+                                    });
 
-                              } , 
-                              text: 'Finish'
-                            ),
-                     
+                                    finishSignUp();
+                                  } catch (e) {
+                                    setState(() {
+                                      _error = 'Failed to update profile: $e';
+                                    });
+                                  }
+                                },
+                                text: 'Finish'
+                              ),                     
                       ],
                     ),
 

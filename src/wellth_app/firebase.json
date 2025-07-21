@@ -1,1 +1,33 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"wellth-app","appId":"1:600688007911:android:e7c8351e016ca491ad6042","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"wellth-app","configurations":{"android":"1:600688007911:android:e7c8351e016ca491ad6042","ios":"1:600688007911:ios:c7ae6da733b31133ad6042","macos":"1:600688007911:ios:c7ae6da733b31133ad6042","web":"1:600688007911:web:1641e98a4d9e7662ad6042","windows":"1:600688007911:web:cf9339038dda1946ad6042"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "wellth-app",
+          "appId": "1:600688007911:android:e7c8351e016ca491ad6042",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "wellth-app",
+          "configurations": {
+            "android": "1:600688007911:android:e7c8351e016ca491ad6042",
+            "ios": "1:600688007911:ios:c7ae6da733b31133ad6042",
+            "macos": "1:600688007911:ios:c7ae6da733b31133ad6042",
+            "web": "1:600688007911:web:1641e98a4d9e7662ad6042",
+            "windows": "1:600688007911:web:cf9339038dda1946ad6042"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  }
+}
