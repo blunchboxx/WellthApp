@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wellth_app/pages/onboarding_page_permissions.dart';
 
+
 class GradientPageSlider extends StatefulWidget {
   @override
   _GradientPageSliderState createState() => _GradientPageSliderState();
@@ -281,7 +282,7 @@ class _GradientPageSliderState extends State<GradientPageSlider> {
                   Expanded(child: _buildButtonGradient("Continue", () {
                     if (_currentIndex == 2)
                     {
-                      Navigator.of(context).pushNamed('/userPermission');
+                      Navigator.of(context).pushNamed('/onboardingJoinCircle');
                     }
                     _nextPage();
                   })),
@@ -296,8 +297,10 @@ class _GradientPageSliderState extends State<GradientPageSlider> {
 
 
 
+  //-------------------Geena's Button Design ---------------//
+
   //Gradient Button
-  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+  /*Widget _buildButtonGradient(String text, VoidCallback onPressed) {
     return SizedBox(
       width: 169,
       height: 41,
@@ -353,6 +356,9 @@ class _GradientPageSliderState extends State<GradientPageSlider> {
     );
   }
 
+
+  
+
   //Gradient Outline Button
   Widget _buildButtonWhite(String text, VoidCallback onPressed) {
     return SizedBox(
@@ -404,6 +410,82 @@ class _GradientPageSliderState extends State<GradientPageSlider> {
                   fontSize: 20.0,
                   fontFamily: 'Inter',
                   color: Color.fromRGBO(100, 89, 89, 100),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }*/
+
+  //------------ Yechan's Button Design ----------------//
+  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: 169,
+      height: 41,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pinkAccent, Colors.blue],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.zero, // Use zero if you're wrapping in SizedBox
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: onPressed,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtonWhite(String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: 169,
+      height: 41,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pinkAccent, Colors.blue],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.all(2), 
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            onPressed: onPressed,
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

@@ -18,9 +18,15 @@ import 'package:wellth_app/auth/auth.dart';
 import 'pages/home_page.dart';
 import 'pages/onboarding_page_bio.dart';
 import 'pages/onboarding_page_permissions.dart';
+import 'pages/landing_page.dart';
+import 'pages/onboarding_wizard_complete.dart';
+import 'pages/onboarding_wizard_join_circle.dart';
+import 'pages/onboarding_wizard_privacy.dart';
+import 'pages/information_carousel.dart';
+//Pages to be deleted if carousel is used
+import 'pages/onboarding_wizard_badges.dart';
 import 'pages/onboarding_page_carousel_circles.dart';
 import 'pages/onboarding_page_carousel_habits.dart';
-import 'pages/information_carousel.dart';
 
 // Added from codelab
 
@@ -46,18 +52,24 @@ class MyApp extends StatelessWidget {
     // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: UserInformationPage(),
-      home: GradientPageSlider(),
+
+      //home: LandingPageScreen(),
+      home: OnboardingScreen_permissions(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route
-        '/userInformation': (context) => OnboardingScreen_bio(),
-        '/userPermission': (context) => OnboardingScreen_permissions(),
+        '/userInformation': (context) => OnboardingScreen_bio(),//first page onboarding wizard
+        '/userPermission': (context) => OnboardingScreen_permissions(),//second page onboarding wizard
+        '/informationCarousel': (context) => GradientPageSlider(),//onboarding carousel (thrid page)
+        '/onboardingJoinCircle': (context) => OnboardingJoinCircleScreen(),//Fourth page onboarding wizard
+        '/onboardingPrivacy': (context) => OnboardingPrivacyScreen(),//fith page onboarding wizard
+        '/onboardingComplete': (context) => OnboardingCompleteScreen(),//sixth/last page onboarding wizard
         '/userProfile': (context) => HomePage(),
+        '/landingPage': (context) => LandingPageScreen(),
 
-        '/informationCarousel': (context) => GradientPageSlider(),
         '/carouselCircles': (context) => OnboardingScreen_carousel_circles(),
         '/carouselHabits': (context) => OnboardingScreen_carousel_habits(),
+        '/carouselBadges': (context) => OnboardingBadgesScreen(),
       
       },
       //home: AuthPage(),

@@ -352,7 +352,8 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
   }
 
 
-  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+  //--------------- Geena's Button Design --------------//
+  /*Widget _buildButtonGradient(String text, VoidCallback onPressed) {
     return SizedBox(
       width: 169,
       height: 41,
@@ -465,5 +466,87 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
         ),
       ),
     );
+  }*/
+
+
+
+
+  //------------ Yechan's Button Design ----------------//
+  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: 169,
+      height: 41,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pinkAccent, Colors.blue],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.zero, // Use zero if you're wrapping in SizedBox
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: onPressed,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
   }
+
+  Widget _buildButtonWhite(String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: 169,
+      height: 41,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pinkAccent, Colors.blue],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.all(2), 
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            onPressed: onPressed,
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }
+
+
