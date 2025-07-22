@@ -46,9 +46,11 @@ dependencies:
     sdk: flutter
   firebase_ui_localizations: ^1.14.0
   google_fonts: ^6.2.1
+  carousel_slider: ^5.1.1
   cloud_firestore: ^5.6.11
   percent_indicator: ^4.2.3
   flutter_custom_clippers: ^2.1.0
+
 
   
 
@@ -98,6 +100,16 @@ flutter:
       - assets/user_avatar.png
       - assets/feed.png
       - assets/board_logo.png
+      - assets/onboarding-add-pfp.png
+      - assets/image-icon.png
+      - assets/onboarding-permissions.png
+      - assets/location-permission-icon.png
+      - assets/contacts-permission-icon.png
+      - assets/location-permission-accepted.png
+      - assets/contacts-permission-accepted.png
+      - assets/img1-car.png
+      - assets/img2-car.png
+      - assets/img3-car.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
