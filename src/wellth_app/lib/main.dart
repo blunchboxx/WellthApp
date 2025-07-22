@@ -5,7 +5,8 @@ import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/home.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:wellth_app/pages/register_page.dart';
-import 'package:wellth_app/pages/information_carousel.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart'; // Used for database functionality
 
 
 
@@ -23,8 +24,11 @@ import 'pages/information_carousel.dart';
 
 // Added from codelab
 
-// TODO(codelab user): Get API key
+// Sets Google API key for Google sign-in
 const clientId = '600688007911-m0c0a2tmvf3bk21itqh4vkcod40566jv.apps.googleusercontent.com';
+
+// Initializes a database on Firebase backend
+var db = FirebaseFirestore.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
