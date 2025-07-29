@@ -150,6 +150,7 @@ Future<void> createUserProfile() async {
       'age': -1,
       'bio': "",
       'createdAt': FieldValue.serverTimestamp(),
+      'hasCompletedOnboarding': false, // Sets flag for determining if user will be sent to onboarding wizard
       // 'preferences': {
       //   'notifications': true,
       //   'theme': 'light'

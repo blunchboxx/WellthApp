@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   void postMessage(){
     //Only post if there is something in the text field
     if (textController.text.isNotEmpty){
-      FirebaseFirestore.instance.collection('User Qoutes').add({
+      FirebaseFirestore.instance.collection('User Quotes').add({
         'UserEmail': currentUser.email,
         'Message': textController.text,
         'TimeStamp': Timestamp.now(),
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: StreamBuilder(
                         stream: FirebaseFirestore.instance
-                          .collection("User Qoutes")
+                          .collection("User Quotes")
                           .orderBy(
                             "TimeStamp", 
                             descending: true,

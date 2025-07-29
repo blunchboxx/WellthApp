@@ -1,8 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wellth_app/pages/landing_page.dart';
 
 class OnboardingCompleteScreen extends StatelessWidget {
   const OnboardingCompleteScreen({super.key});
+
+  Future<void> _completeOnboarding(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'hasCompletedOnboarding': true});
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LandingPageScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,12 +131,7 @@ class OnboardingCompleteScreen extends StatelessWidget {
                         const SizedBox(height: 32),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const LandingPageScreen(),
-                              ),
-                            );
+                            _completeOnboarding(context); // Change onboarding complete flag and proceed to landing page
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(

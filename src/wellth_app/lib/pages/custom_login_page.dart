@@ -57,7 +57,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
          _pwCtrl.text.trim(),
       );
 
-      Navigator.of(context).pushNamed('/userProfile');
+      Navigator.of(context).pushNamed('/landingPage');
       // Handle successful sign-in (e.g., update state, navigate, etc.)
     } on FirebaseAuthException catch (e) {
       setState(() => _error = e.message);
