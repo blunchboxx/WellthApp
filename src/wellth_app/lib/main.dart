@@ -54,13 +54,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //home: LandingPageScreen(),
-      home: OnboardingScreen_permissions(),
+      home: CustomLoginPage(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route
         '/userInformation': (context) => OnboardingScreen_bio(),//first page onboarding wizard
         '/userPermission': (context) => OnboardingScreen_permissions(),//second page onboarding wizard
         '/informationCarousel': (context) => GradientPageSlider(),//onboarding carousel (thrid page)
+        '/onboardingPermissions': (context) => OnboardingScreen_permissions(), // Initial onboarding permissions screen
         '/onboardingJoinCircle': (context) => OnboardingJoinCircleScreen(),//Fourth page onboarding wizard
         '/onboardingPrivacy': (context) => OnboardingPrivacyScreen(),//fith page onboarding wizard
         '/onboardingComplete': (context) => OnboardingCompleteScreen(),//sixth/last page onboarding wizard
