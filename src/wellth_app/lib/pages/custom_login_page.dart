@@ -7,6 +7,7 @@ import 'package:wellth_app/components/gradient-button.dart';
 import 'package:wellth_app/app.dart';
 import 'package:wellth_app/main.dart';
 import 'package:wellth_app/auth/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomLoginPage extends StatefulWidget {
   //Geens Modifications
@@ -57,13 +58,27 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
          _pwCtrl.text.trim(),
       );
 
-      Navigator.of(context).pushNamed('/landingPage');
-      // Handle successful sign-in (e.g., update state, navigate, etc.)
-    } on FirebaseAuthException catch (e) {
-      setState(() => _error = e.message);
-      // Optionally: call a callback or set a variable to show the error in the UI
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(code: 'no-user', message: 'No user is currently signed in');
+    }
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final hasCompleted = doc.data()?['hasCompletedOnboarding'] == true;
+
+    if (hasCompleted) {
+      Navigator.of(context).pushReplacementNamed('/userProfile');
+    } else {
+      Navigator.of(context).pushReplacementNamed('/onboardingWizard');
+    }
+  } on FirebaseAuthException catch (e) {
+    setState(() => _error = e.message);
+  } finally {
+    if (mounted) setState(() => _loading = false);
     }
   }
 
