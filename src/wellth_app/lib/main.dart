@@ -5,6 +5,7 @@ import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/home.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:wellth_app/pages/register_page.dart';
+import 'package:wellth_app/pages/profile_page.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart'; // Used for database functionality
 
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //home: LandingPageScreen(),
-      home: OnboardingScreen_permissions(),
+      home: ProfileScreen(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route

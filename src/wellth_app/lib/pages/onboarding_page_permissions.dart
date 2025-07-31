@@ -32,7 +32,9 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
   final gradientBlueOrange = const LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color.fromARGB(255, 28, 179, 230), Color.fromARGB(255,54, 121, 232), Color.fromARGB(255,122, 66, 189),Color.fromARGB(255,169, 56, 165),Color.fromARGB(255,221, 57, 116),Color.fromARGB(255,243, 93, 55)],
+    colors: [Colors.blue, Colors.purple, Colors.orange],
+    //colors: [Colors.pinkAccent, Colors.blue],
+    //colors: [Color.fromARGB(255, 28, 179, 230), Color.fromARGB(255,54, 121, 232), Color.fromARGB(255,122, 66, 189),Color.fromARGB(255,169, 56, 165),Color.fromARGB(255,221, 57, 116),Color.fromARGB(255,243, 93, 55)],
   );
 
   @override
@@ -103,18 +105,18 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
                   ],
                 ),
                 
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.all(1.5),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: const [
-                      BoxShadow(
+                      /*BoxShadow(
                         color: Color.fromARGB(25,0,0,0),
                         blurRadius: 4,
                         offset: Offset(0, 0),
                         spreadRadius: 1,
-                      ),
+                      ),*/
                     ],
                   ),
                   padding: EdgeInsets.all(10),
@@ -244,7 +246,7 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
 
   //--------------- Geena's Button Design ---------------//
 
-  /*Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
     return SizedBox(
       width: 169,
       height: 41,
@@ -357,7 +359,7 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
         ),
       ),
     );
-  }*/
+  }
 
   Widget buildPermissionBox({
     required bool value,
@@ -425,7 +427,7 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
   }
 
     //------------ Yechan's Button Design ----------------//
-  Widget _buildButtonGradient(String text, VoidCallback onPressed) {
+  /*Widget _buildButtonGradient(String text, VoidCallback onPressed) {
     return SizedBox(
       width: 169,
       height: 41,
@@ -498,6 +500,6 @@ class _OnboardingScreen_permissions extends State<OnboardingScreen_permissions>{
         ),
       ),
     );
-  }
+  }*/
 
 }

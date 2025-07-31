@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:wellth_app/components/gradient-button.dart';
+import 'package:wellth_app/components/gradient-buttons.dart';
 import 'package:wellth_app/main.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:wellth_app/auth/auth.dart';

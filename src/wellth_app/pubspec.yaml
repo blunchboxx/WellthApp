@@ -33,6 +33,8 @@ dependencies:
     sdk: flutter
   english_words: ^4.0.0
   provider: ^6.1.5
+  smooth_page_indicator: ^1.2.0 
+  font_awesome_flutter: ^10.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -50,6 +52,8 @@ dependencies:
   cloud_firestore: ^5.6.11
   percent_indicator: ^4.2.3
   flutter_custom_clippers: ^2.1.0
+  firebase_storage: ^12.4.9
+  image_picker: ^1.0.0
 
 
   
@@ -110,6 +114,15 @@ flutter:
       - assets/img1-car.png
       - assets/img2-car.png
       - assets/img3-car.png
+      - assets/circles.png
+      - assets/settings.png
+      - assets/contacts.png
+      - assets/edit-button.png
+      - assets/geenas-pfp-because-the-profile-looked-ugly.jpeg
+      - assets/temp-badge.png
+      - assets/view-all-badges.png
+      - assets/rocket.png
+      - assets/admin-badge.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
