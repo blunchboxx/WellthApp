@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:intl/intl.dart';
+
+String monthName(int monthNumber) {
+  // Creates a dummy date on that month; 'MMMM' gives you full month name.
+  return DateFormat.MMMM('en_US').format(DateTime(2021, monthNumber, 1));
+}
+
+DateTime now = DateTime.now();
+final today = DateTime.now();
+final monthday = DateFormat.MMMM().add_d().format(today);
 
 class Task {
   final String title;
@@ -121,19 +131,21 @@ class _HomeScreenState extends State<LandingPageScreen> {
 
   Widget _summonWelcomeBanner() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 40, bottom: 20),
       child: Row(
         children: [
-          Image.asset('assets/Wellth logo.png', width: 72, height: 72),
+          Image.asset('assets/wellth logo w_o text.png', width: 100, height: 84),
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
               'Good Morning,\n Yechan(Paul)',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.underline,
+                fontSize: 36,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Inter',
+                height: 1.2,
               ),
+              textAlign: TextAlign.left,
             ),
           ),
         ],
@@ -142,16 +154,18 @@ class _HomeScreenState extends State<LandingPageScreen> {
   }
 
   Widget _renderProgressDeck() {
-    const done = 15, total = 25, diff = -10;
+    const done = 15, total = 25, diff =  done-total;
     const indicatorRadius = 48.0;
     final indicatorDiameter = indicatorRadius * 2;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 23),
+      padding: const EdgeInsets.only(top: 14, bottom: 28, left: 29, right: 29),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFE0F7EF), Color(0xFFD0F2EE)],
+          colors: [Color.fromARGB(100, 81, 238, 173), Color.fromARGB(255, 224, 239, 245)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [BoxShadow(blurRadius: 4, color: Colors.black12)],
@@ -159,63 +173,92 @@ class _HomeScreenState extends State<LandingPageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Almost there !',
-            style: TextStyle(
-              fontSize: 20,
-              decoration: TextDecoration.underline,
+            Center(
+            child: Text(
+              'Almost there !',
+              style: TextStyle(
+              fontSize: 32,
+              fontFamily: 'Inter',
+             // decoration: TextDecoration.underline,
+              ),
             ),
+            
           ),
           const SizedBox(height: 12),
-          Row(
+            Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircularPercentIndicator(
-                radius: indicatorRadius,
-                lineWidth: 6,
-                percent: done / total,
-                center: Text('$done/$total'),
-                progressColor: Colors.green,
-                backgroundColor: Colors.white,
-                animation: true,
-                animationDuration: 800,
+              radius: indicatorRadius,
+              lineWidth: 8,
+              percent: done / total,
+              center: Text('$done/$total',
+              style: TextStyle(fontSize: 20),),
+              progressColor: Color.fromARGB(255, 17, 209, 129),
+              backgroundColor: Colors.white,
+              animation: true,
+              animationDuration: 800,
               ),
               const SizedBox(width: 16),
-              Text(
-                "Circle’s daily goal: $diff",
-                style: TextStyle(color: diff < 0 ? Colors.red : Colors.black),
+              Flexible(
+              child: RichText(
+                text: TextSpan(
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                ),
+                children: [
+                  const TextSpan(text: "Circle's daily goal: "),
+                  TextSpan(
+                  text: '$diff XP',
+                  style: TextStyle(
+                    color: diff < 0 ? Color.fromARGB(255, 169, 57, 74) : Colors.black,
+                  ),
+                  ),
+                ],
+                ),
+                softWrap: true,
+              ),
               ),
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 31),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
                 width: indicatorDiameter,
-                height: indicatorDiameter,
-                child: const Center(
-                  child: Text(
-                    '2×',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
+                
+               child: Column(
+                children: [
+                  const Text(
+                  '2×',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    height: 1,
+                    color: Colors.blue,
                   ),
+                  ),
+                  Image.asset(
+                  'assets/squigally.png',
+                  width: 64,
+                  height: 14,
+                  ),
+                ],
                 ),
-              ),
-              const SizedBox(width: 16),
+                ),
+              const SizedBox(width: 16,),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                      style: const TextStyle(fontSize: 22, color: Colors.black),
                       children: [
-                        const TextSpan(text: 'Health Pts '),
+                        const TextSpan(text: 'Wellth XP '),
                         TextSpan(
                           text: 'Multiplier',
                           style: const TextStyle(color: Colors.blue),
@@ -225,22 +268,33 @@ class _HomeScreenState extends State<LandingPageScreen> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    '5 more points until 3×',
-                    style: TextStyle(fontSize: 12),
+                    '+5 XP until 3×',
+                    style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                 ],
               ),
             ],
           ),
         ],
-      ),
+
+
+  ),
+      
     );
   }
 
   Widget _magicWaveBreak() {
-    return ClipPath(
-      clipper: WaveClipperOne(reverse: true),
-      child: Container(height: 24, color: Colors.orangeAccent.withOpacity(0.5)),
+    return Padding(
+      padding: const EdgeInsets.only(top:15),
+      child: SizedBox(
+      height: 73,                  // height of the wave
+      width: double.infinity,         // fill the available width
+      child: Image.asset(
+        'assets/wave.png',            // your pre-cropped wave PNG
+        fit: BoxFit.fill,    
+             // scale width to fit, preserve aspect
+      ),
+        ),
     );
   }
 
@@ -248,13 +302,59 @@ class _HomeScreenState extends State<LandingPageScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Daily Tasks:',
-            style: TextStyle(
-              fontSize: 18,
-              decoration: TextDecoration.underline,
+          // row for habit daily view controls
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 23),
+            child: Row(
+               
+              //mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Icon button for month view 
+                IconButton(
+                  icon: 
+                  Column( 
+                    children: [ 
+                      Icon(Icons.calendar_month_outlined,size: 32, weight:1,color: Color.fromRGBO(230, 114, 114, 1),),
+                      const Text('View', style: 
+                        TextStyle(fontSize: 14, fontFamily:'Inter', fontWeight:FontWeight.w700, color: Color.fromRGBO(230, 114, 114, 1)), 
+                          ),]),
+                  onPressed: () => _invokeQuestEditor(context, quests.length),
+                ),
+                const Spacer(),
+            
+              // left arrow to move one day back
+                IconButton(
+                  icon: Image.asset('assets/left arrow.png', width: 32, height: 32),
+                  onPressed: () {
+                    // Handle left arrow action
+                  },
+                ),
+            
+              // date: 
+              Text(monthday, style: const TextStyle(fontSize: 22, fontFamily: 'Inter', fontWeight: FontWeight.w500),),
+            
+              // right arrow to move one day forward
+                IconButton(
+                  icon: Image.asset('assets/right arrow.png', width: 32, height: 32),
+                  onPressed: () {
+                    // Handle right arrow action
+                  },
+                ),
+            
+                const Spacer(),
+            
+              // Icon button for filtering tasks by category type
+                IconButton(
+                  icon: const Icon(Icons.filter_list, size: 32, color: Color.fromRGBO(230, 114, 114, 1)),
+                  onPressed: () {
+                    // Handle filter action
+                  },
+                ),
+            
+              ],
+            
+            
             ),
           ),
           const SizedBox(height: 12),
