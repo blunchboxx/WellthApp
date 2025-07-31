@@ -52,8 +52,9 @@ dependencies:
   cloud_firestore: ^5.6.11
   percent_indicator: ^4.2.3
   flutter_custom_clippers: ^2.1.0
+  intl: ^0.20.2
   firebase_storage: ^12.4.9
-  image_picker: ^1.0.0
+  image_picker: ^1.1.2
 
 
   
@@ -123,7 +124,11 @@ flutter:
       - assets/view-all-badges.png
       - assets/rocket.png
       - assets/admin-badge.png
-
+      - assets/wellth logo w_o text.png
+      - assets/squigally.png
+      - assets/wave.png
+      - assets/left arrow.png
+      - assets/right arrow.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

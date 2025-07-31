@@ -62,6 +62,7 @@ class MyApp extends StatelessWidget {
         '/userInformation': (context) => OnboardingScreen_bio(),//first page onboarding wizard
         '/userPermission': (context) => OnboardingScreen_permissions(),//second page onboarding wizard
         '/informationCarousel': (context) => GradientPageSlider(),//onboarding carousel (thrid page)
+        '/onboardingPermissions': (context) => OnboardingScreen_permissions(), // Initial onboarding permissions screen
         '/onboardingJoinCircle': (context) => OnboardingJoinCircleScreen(),//Fourth page onboarding wizard
         '/onboardingPrivacy': (context) => OnboardingPrivacyScreen(),//fith page onboarding wizard
         '/onboardingComplete': (context) => OnboardingCompleteScreen(),//sixth/last page onboarding wizard

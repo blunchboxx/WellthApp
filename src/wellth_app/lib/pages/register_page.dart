@@ -51,38 +51,38 @@ class _RegisterPageState extends State <RegisterPage>{
       return;
     }
 
-  setState(() {
-    _loading = true;
-    _error = null;
-  });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
-  try {
-  // Register the user
-  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-    email: _emailCtrl.text,
-    password: _pwCtrl.text,
-  );
+    try {
+    // Register the user
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _emailCtrl.text,
+      password: _pwCtrl.text,
+    );
 
-  // Force sign-in again to ensure currentUser is set
-  // Now currentUser is guaranteed to be valid
-  await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: _emailCtrl.text,
-    password: _pwCtrl.text,
-  );
+    // Force sign-in again to ensure currentUser is set
+    // Now currentUser is guaranteed to be valid
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _emailCtrl.text,
+      password: _pwCtrl.text,
+    );
 
-  // Create user Firestore database document
-  await createUserProfile();
+    // Create user Firestore database document
+    await createUserProfile();
 
-  // Dismiss loading circle
-  if (context.mounted) Navigator.pop(context);
+    // Dismiss loading circle
+    if (context.mounted) Navigator.pop(context);
 
-  // Navigate to User Information Page
-  Navigator.pushReplacementNamed(context, '/userInformation');
-  
-} on FirebaseAuthException catch (e) {
-    if (mounted) Navigator.of(context).pop();
-    displayMessage(e.message ?? e.code);
-  }
+    // Navigate to User Information Page
+    Navigator.pushReplacementNamed(context, '/userInformation');
+    
+  } on FirebaseAuthException catch (e) {
+      if (mounted) Navigator.of(context).pop();
+      displayMessage(e.message ?? e.code);
+    }
   // …
 }
 
@@ -150,6 +150,7 @@ Future<void> createUserProfile() async {
       'age': -1,
       'bio': "",
       'createdAt': FieldValue.serverTimestamp(),
+      'hasCompletedOnboarding': false, // Sets flag for determining if user will be sent to onboarding wizard
       // 'preferences': {
       //   'notifications': true,
       //   'theme': 'light'
