@@ -112,11 +112,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = userData?['firstName']?.toString().toUpperCase() ?? 'GEEN'; //UPDATE
-    final lastName = userData?['lastName']?.toString().toUpperCase() ?? 'VAN DIJK'; //UPDATE
+    final firstName = userData?['firstName']?['stringValue']?.toString().toUpperCase() ?? 'USER';
+    final lastName = userData?['lastName']?['stringValue']?.toString().toUpperCase() ?? 'NO NAME';
+
     final bio = userData?['bio'] ?? '';
     final age = userData?['age'] ?? '';
-    final isAdmin = userData?['isAdmin'] ?? false;
+    
+    bool isAdmin = userData?['isAdmin']?['booleanValue'] ?? false;
+
+
     print(firstName + ' ' + lastName);
 
     return Scaffold(
