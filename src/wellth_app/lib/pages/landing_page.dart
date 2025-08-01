@@ -27,6 +27,7 @@ class LandingPageScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<LandingPageScreen> {
+  int _currentIndex = 4;
   // Growable list of tasks
   List<Task> quests = List<Task>.from([
     Task('Walk 10k steps', 5, completed: true),
@@ -134,7 +135,11 @@ class _HomeScreenState extends State<LandingPageScreen> {
       padding: const EdgeInsets.only(left: 16, right: 16, top: 40, bottom: 20),
       child: Row(
         children: [
-          Image.asset('assets/wellth logo w_o text.png', width: 100, height: 84),
+          Image.asset(
+            'assets/wellth logo w_o text.png',
+            width: 100,
+            height: 84,
+          ),
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
@@ -154,7 +159,7 @@ class _HomeScreenState extends State<LandingPageScreen> {
   }
 
   Widget _renderProgressDeck() {
-    const done = 15, total = 25, diff =  done-total;
+    const done = 15, total = 25, diff = done - total;
     const indicatorRadius = 48.0;
     final indicatorDiameter = indicatorRadius * 2;
 
@@ -163,7 +168,10 @@ class _HomeScreenState extends State<LandingPageScreen> {
       padding: const EdgeInsets.only(top: 14, bottom: 28, left: 29, right: 29),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color.fromARGB(100, 81, 238, 173), Color.fromARGB(255, 224, 239, 245)],
+          colors: [
+            Color.fromARGB(100, 81, 238, 173),
+            Color.fromARGB(255, 224, 239, 245),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -173,52 +181,49 @@ class _HomeScreenState extends State<LandingPageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            Center(
+          Center(
             child: Text(
               'Almost there !',
               style: TextStyle(
-              fontSize: 32,
-              fontFamily: 'Inter',
-             // decoration: TextDecoration.underline,
+                fontSize: 32,
+                fontFamily: 'Inter',
+                // decoration: TextDecoration.underline,
               ),
             ),
-            
           ),
           const SizedBox(height: 12),
-            Row(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircularPercentIndicator(
-              radius: indicatorRadius,
-              lineWidth: 8,
-              percent: done / total,
-              center: Text('$done/$total',
-              style: TextStyle(fontSize: 20),),
-              progressColor: Color.fromARGB(255, 17, 209, 129),
-              backgroundColor: Colors.white,
-              animation: true,
-              animationDuration: 800,
+                radius: indicatorRadius,
+                lineWidth: 8,
+                percent: done / total,
+                center: Text('$done/$total', style: TextStyle(fontSize: 20)),
+                progressColor: Color.fromARGB(255, 17, 209, 129),
+                backgroundColor: Colors.white,
+                animation: true,
+                animationDuration: 800,
               ),
               const SizedBox(width: 16),
               Flexible(
-              child: RichText(
-                text: TextSpan(
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 22,
-                ),
-                children: [
-                  const TextSpan(text: "Circle's daily goal: "),
-                  TextSpan(
-                  text: '$diff XP',
-                  style: TextStyle(
-                    color: diff < 0 ? Color.fromARGB(255, 169, 57, 74) : Colors.black,
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.black, fontSize: 22),
+                    children: [
+                      const TextSpan(text: "Circle's daily goal: "),
+                      TextSpan(
+                        text: '$diff XP',
+                        style: TextStyle(
+                          color: diff < 0
+                              ? Color.fromARGB(255, 169, 57, 74)
+                              : Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
-                  ),
-                ],
+                  softWrap: true,
                 ),
-                softWrap: true,
-              ),
               ),
             ],
           ),
@@ -229,27 +234,23 @@ class _HomeScreenState extends State<LandingPageScreen> {
             children: [
               SizedBox(
                 width: indicatorDiameter,
-                
-               child: Column(
-                children: [
-                  const Text(
-                  '2×',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    height: 1,
-                    color: Colors.blue,
-                  ),
-                  ),
-                  Image.asset(
-                  'assets/squigally.png',
-                  width: 64,
-                  height: 14,
-                  ),
-                ],
+
+                child: Column(
+                  children: [
+                    const Text(
+                      '2×',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        height: 1,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    Image.asset('assets/squigally.png', width: 64, height: 14),
+                  ],
                 ),
-                ),
-              const SizedBox(width: 16,),
+              ),
+              const SizedBox(width: 16),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,32 +270,32 @@ class _HomeScreenState extends State<LandingPageScreen> {
                   const SizedBox(height: 4),
                   const Text(
                     '+5 XP until 3×',
-                    style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 0, 0, 0)),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ],
-
-
-  ),
-      
+      ),
     );
   }
 
   Widget _magicWaveBreak() {
     return Padding(
-      padding: const EdgeInsets.only(top:15),
+      padding: const EdgeInsets.only(top: 15),
       child: SizedBox(
-      height: 73,                  // height of the wave
-      width: double.infinity,         // fill the available width
-      child: Image.asset(
-        'assets/wave.png',            // your pre-cropped wave PNG
-        fit: BoxFit.fill,    
-             // scale width to fit, preserve aspect
-      ),
+        height: 73, // height of the wave
+        width: double.infinity, // fill the available width
+        child: Image.asset(
+          'assets/wave.png', // your pre-cropped wave PNG
+          fit: BoxFit.fill,
+          // scale width to fit, preserve aspect
         ),
+      ),
     );
   }
 
@@ -307,54 +308,81 @@ class _HomeScreenState extends State<LandingPageScreen> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 23),
             child: Row(
-               
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Icon button for month view 
+                // Icon button for month view
                 IconButton(
-                  icon: 
-                  Column( 
-                    children: [ 
-                      Icon(Icons.calendar_month_outlined,size: 32, weight:1,color: Color.fromRGBO(230, 114, 114, 1),),
-                      const Text('View', style: 
-                        TextStyle(fontSize: 14, fontFamily:'Inter', fontWeight:FontWeight.w700, color: Color.fromRGBO(230, 114, 114, 1)), 
-                          ),]),
+                  icon: Column(
+                    children: [
+                      Icon(
+                        Icons.calendar_month_outlined,
+                        size: 32,
+                        weight: 1,
+                        color: Color.fromRGBO(230, 114, 114, 1),
+                      ),
+                      const Text(
+                        'View',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(230, 114, 114, 1),
+                        ),
+                      ),
+                    ],
+                  ),
                   onPressed: () => _invokeQuestEditor(context, quests.length),
                 ),
                 const Spacer(),
-            
-              // left arrow to move one day back
+
+                // left arrow to move one day back
                 IconButton(
-                  icon: Image.asset('assets/left arrow.png', width: 32, height: 32),
+                  icon: Image.asset(
+                    'assets/left arrow.png',
+                    width: 32,
+                    height: 32,
+                  ),
                   onPressed: () {
                     // Handle left arrow action
                   },
                 ),
-            
-              // date: 
-              Text(monthday, style: const TextStyle(fontSize: 22, fontFamily: 'Inter', fontWeight: FontWeight.w500),),
-            
-              // right arrow to move one day forward
+
+                // date:
+                Text(
+                  monthday,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                // right arrow to move one day forward
                 IconButton(
-                  icon: Image.asset('assets/right arrow.png', width: 32, height: 32),
+                  icon: Image.asset(
+                    'assets/right arrow.png',
+                    width: 32,
+                    height: 32,
+                  ),
                   onPressed: () {
                     // Handle right arrow action
                   },
                 ),
-            
+
                 const Spacer(),
-            
-              // Icon button for filtering tasks by category type
+
+                // Icon button for filtering tasks by category type
                 IconButton(
-                  icon: const Icon(Icons.filter_list, size: 32, color: Color.fromRGBO(230, 114, 114, 1)),
+                  icon: const Icon(
+                    Icons.filter_list,
+                    size: 32,
+                    color: Color.fromRGBO(230, 114, 114, 1),
+                  ),
                   onPressed: () {
                     // Handle filter action
                   },
                 ),
-            
               ],
-            
-            
             ),
           ),
           const SizedBox(height: 12),
@@ -419,32 +447,75 @@ class _HomeScreenState extends State<LandingPageScreen> {
     );
   }
 
+  void _onNavTapped(int index) {
+    setState(() => _currentIndex = index);
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/CircleFeed');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/CircleDetail');
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/Circles');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/userProfile');
+        break;
+    }
+  }
+
   Widget _navigationCompass() {
-    return BottomNavigationBar(
-      currentIndex: 2,
-      type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage('assets/feed.png')),
-          label: 'Feed',
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Theme(
+        // ripple/splash 제거
+        data: Theme.of(context).copyWith(
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
         ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage('assets/board_logo.png')),
-          label: 'Board',
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          currentIndex: _currentIndex,
+          onTap: _onNavTapped,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/feed.png', height: 30),
+              label: 'Feed',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/board_logo.png', height: 30),
+              label: 'Board',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/tasks_logo.png', height: 30),
+              label: 'Add Task',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/circles.png', height: 30),
+              label: 'Circles',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person, size: 30),
+              label: 'Profile',
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage('assets/tasks_logo.png')),
-          label: 'Add Task',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.rss_feed_outlined),
-          label: 'Circles',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.rss_feed_outlined),
-          label: 'Profile',
-        ),
-      ],
+      ),
     );
   }
 }
