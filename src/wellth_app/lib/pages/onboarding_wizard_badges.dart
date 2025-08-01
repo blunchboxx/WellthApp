@@ -180,7 +180,7 @@ class OnboardingBadgesScreen extends StatelessWidget {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => OnboardingJoinCircleScreen(),
+                          builder: (_) => const OnboardingJoinCircleScreen(),
                         ),
                       ),
                       child: Container(
