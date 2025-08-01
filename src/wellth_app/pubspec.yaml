@@ -129,6 +129,7 @@ flutter:
       - assets/wave.png
       - assets/left arrow.png
       - assets/right arrow.png
+      - assets/feed_sample_1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
