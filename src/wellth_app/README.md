@@ -1,16 +1,50 @@
-# wellth_app
+# The Wellth App 🌿
 
-A new Flutter project.
+**The Wellth App** is a wellness-focused mobile application built with Flutter. It promotes holistic health by helping users track personal stats, connect in support circles, and complete wellness tasks.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🧘‍♀️ **Profile Dashboard**
+  - View personal stats like age, weight, height
+  - Edit profile info and change profile picture via modal dialogs
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- ✅ **Tasks Tracking**
+  - Mark tasks as completed with visual indicators
+  - Easy-to-read interface with clear categorization
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 🌐 **Support Circles**
+  - Horizontally scrollable list of peer support groups
+  - Visual chip-style UI for engaging interaction
+
+- 🎨 **Modern UI Design**
+  - Custom gradients and scrollable containers
+  - Modals with animated transitions and rich visuals
+
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter** – UI framework
+- **Dart** – Programming language
+- **Provider / setState** – State management
+- **Image Assets** – Custom icons and buttons
+- **Custom Navigation** – Page routing and modal dialogs
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK installed
+- Android Studio or VS Code with Flutter extension
+- iOS Simulator or Android Emulator set up
+
+### Installation
+
+```bash
+git clone https://github.com/blunchboxx/WellthApp.git
+cd WellthApp
+flutter pub get
