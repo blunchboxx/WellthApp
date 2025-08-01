@@ -39,6 +39,12 @@ Future<void> joinCircle(String circleId) async {
   });
 }
 
+// Allow user to leave a circle
+Future<void> leaveCircle(String circleId) async {
+  print('fill in later with logic to leave circle');
+
+}
+
 // Check user role in a circle
 Future<String?> getUserRole(String circleId) async {
   final user = FirebaseAuth.instance.currentUser;
@@ -47,6 +53,48 @@ Future<String?> getUserRole(String circleId) async {
   return doc.data()?['roles']?[user!.uid];
 }
 
+
+
+/// Fetches the “top 10” circles (ordered by createdAt descending)
+/// and returns a List of maps containing each doc’s id & name.
+Future<List<Map<String, String>>> fetchTop10Circles() async {
+  // 1) Run your query once (descending newest-first—flip that flag if you want oldest-first)
+  final snap = await FirebaseFirestore.instance
+    .collection('circles')
+    .orderBy('createdAt', descending: false)
+    .limit(10)
+    .get();
+
+  // 2) Log raw data so you can inspect exactly what doc.data() looks like
+  for (final doc in snap.docs) {
+    print('🔍 doc ${doc.id} → raw data: ${doc.data()}');
+    final raw = doc.data() as Map<String, dynamic>;
+    print('   name field runtimeType: ${raw['name'].runtimeType}');
+  }
+
+  // 3) Map each doc to a simple {id, name} map
+  return snap.docs.map((doc) {
+    String name;
+
+    // Try the plugin’s unwrapped getter first:
+    final dynamic maybeName = doc.get('name');
+    if (maybeName is String) {
+      name = maybeName;
+    } else if (maybeName is Map<String, dynamic> &&
+               maybeName.containsKey('stringValue')) {
+      // Fallback: manual unwrap of { stringValue: "..." }
+      name = maybeName['stringValue'] as String;
+    } else {
+      // Last resort: stringify whatever it is
+      name = maybeName?.toString() ?? '';
+    }
+
+    return {
+      'id': doc.id,
+      'name': name,
+    };
+  }).toList();
+}
 
 
 // Future<void> createUserProfile() async {

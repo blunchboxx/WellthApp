@@ -1,11 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:wellth_app/pages/onboarding_wizard_privacy.dart';
+import '../circles.dart';
 
-class OnboardingJoinCircleScreen extends StatelessWidget {
-  const OnboardingJoinCircleScreen({super.key});
+Future<List<Map<String, String>>?> loadCircles() async {
+  try {
+    final topCircles = await fetchTop10Circles();
+    
+    for (final c in topCircles) {
+      
+      print('Circle ID=${c['id']}, name=${c['name']}');
+    }
+    return topCircles; 
+  } catch (e) {
+    print('Error loading circlesssss: $e');
+  }
+}
+
+
+
+
+
+
+
+class OnboardingJoinCircleScreen extends StatefulWidget {
+
+   @override
+     _OnboardingJoinCircleScreenState createState() =>
+      _OnboardingJoinCircleScreenState();
+}
+
+class _OnboardingJoinCircleScreenState
+    extends State<OnboardingJoinCircleScreen> {
+  late final Future<List<Map<String, String>>?> _circlesFuture;
+
+  final Set<String> _joined = {};
+  final Set<String> _loading = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Kick off the load exactly once:
+    _circlesFuture = loadCircles();
+
+  }
+
+
+    Future<void> _onTap(String id) async {
+    setState(() => _loading.add(id));            // start spinner/disable
+    if (_joined.contains(id)) {
+      await leaveCircle(id);
+      setState(() => _joined.remove(id));
+    } else {
+      await joinCircle(id);
+      setState(() => _joined.add(id));
+    }
+    setState(() => _loading.remove(id));          // stop spinner/enable
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    
     final gradientBlueOrange = const LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -19,23 +76,6 @@ class OnboardingJoinCircleScreen extends StatelessWidget {
       ],
     );
 
-    final circles = [
-      {
-        'name': 'Hard 75 Group',
-        'category': 'Physical Activity',
-        'members': '+ 14 others',
-      },
-      {
-        'name': 'Runners High',
-        'category': 'Physical Activity',
-        'members': '+ 14 others',
-      },
-      {
-        'name': 'Open Mind Happy life',
-        'category': 'Wellness',
-        'members': '+ 14 others',
-      },
-    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -124,10 +164,30 @@ class OnboardingJoinCircleScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: circles.length,
+                          child: FutureBuilder<List<Map<String, String>>?>(
+                          future: _circlesFuture,
+                          builder: (context, snap) {
+                            if (snap.connectionState == ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (snap.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snap.error}'));
+                            }
+                            final circles = snap.data;
+                            if (circles == null || circles.isEmpty) {
+                              return const Center(
+                                  child: Text('No circles found.'));
+                            }
+                            
+                            return ListView.builder(
+                            itemCount: 8,
                             itemBuilder: (context, index) {
                               final circle = circles[index];
+                              final isJoined = _joined.contains(circle['id']);
+                              final isLoading = _loading.contains(circle['id']);
+                              
                               return Card(
                                 color: Colors.white,
                                 shape: RoundedRectangleBorder(
@@ -178,7 +238,7 @@ class OnboardingJoinCircleScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              circle['members']!,
+                                              'members#',
                                               style: const TextStyle(
                                                 color: Colors.black54,
                                               ),
@@ -187,23 +247,23 @@ class OnboardingJoinCircleScreen extends StatelessWidget {
                                         ),
                                       ),
                                       OutlinedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const OnboardingPrivacyScreen(),
-                                            ),
-                                          );
-                                        },
-                                        child: const Text('Join'),
+                                       onPressed: isLoading ? null : () => _onTap(circle['id']!),
+                                        child: isLoading
+                                          ? const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(strokeWidth: 2),
+                                            )
+                                          : Text(isJoined ? 'Leave' : 'Join'),
                                       ),
                                     ],
                                   ),
                                 ),
                               );
                             },
-                          ),
+                          );
+                          }
+                        )
                         ),
                         const SizedBox(height: 8),
                         Center(
