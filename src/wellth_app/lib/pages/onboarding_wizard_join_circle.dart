@@ -19,23 +19,6 @@ class OnboardingJoinCircleScreen extends StatelessWidget {
       ],
     );
 
-    final circles = [
-      {
-        'name': 'Hard 75 Group',
-        'category': 'Physical Activity',
-        'members': '+ 14 others',
-      },
-      {
-        'name': 'Runners High',
-        'category': 'Physical Activity',
-        'members': '+ 14 others',
-      },
-      {
-        'name': 'Open Mind Happy life',
-        'category': 'Wellness',
-        'members': '+ 14 others',
-      },
-    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
