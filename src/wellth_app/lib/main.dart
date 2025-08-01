@@ -54,8 +54,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
-      //home: LandingPageScreen(),
-      home: ProfileScreen(),
+      home: CustomLoginPage(),
+      //home: ProfileScreen(),
       routes: {
         '/register': (context) => RegisterPage(), // Register page route
         '/login': (context) => CustomLoginPage(), // Custom login page route
