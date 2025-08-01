@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -27,7 +29,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     //colors: [Color.fromARGB(255, 28, 179, 230), Color.fromARGB(255,54, 121, 232), Color.fromARGB(255,122, 66, 189),Color.fromARGB(255,169, 56, 165),Color.fromARGB(255,221, 57, 116),Color.fromARGB(255,243, 93, 55)],
   );
 
+  Map<String, dynamic>? userData;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchCurrentUser();
+  }
+
+  Future<void> fetchCurrentUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        setState(() {
+          userData = doc.data();
+        });
+      }
+    }
+  }
 
 
   int _currentIndex = 4; // Profile tab index by default
@@ -46,6 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Fitness': ['Hard 75 Group', 'Morning Joggers'],
     'Wellness': ['Open Mind Happy Life', 'Meditation Circle'],
     'Social': ['Book Club', 'Movie Fans'],
+    'Other': ['Random Club', 'Hydration Circle'],
   };
 
 
@@ -55,16 +76,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Navigate to the corresponding page based on the label
     switch (label) {
       case 'Feed':
-        Navigator.pushNamed(context, '/userInformation');
+        Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Board':
-        Navigator.pushNamed(context, '/userInformation');
+        Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Add Task':
-        Navigator.pushNamed(context, '/userInformation');
+        Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Circles':
-        Navigator.pushNamed(context, '/userInformation');
+        Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Profile':
         // Already on Profile page, no action needed
@@ -91,6 +112,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final firstName = userData?['firstName']?.toString().toUpperCase() ?? 'GEEN'; //UPDATE
+    final lastName = userData?['lastName']?.toString().toUpperCase() ?? 'VAN DIJK'; //UPDATE
+    final bio = userData?['bio'] ?? '';
+    final age = userData?['age'] ?? '';
+    final isAdmin = userData?['isAdmin'] ?? false;
+    print(firstName + ' ' + lastName);
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: Container(
@@ -115,25 +143,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           showUnselectedLabels: true,
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset('assets/feed.png', height: 44),
+              icon: Image.asset('assets/feed.png', height: 25),
               label: 'Feed',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/board_logo.png', height: 44),
+              icon: Image.asset('assets/board_logo.png', height: 25),
               label: 'Board',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/tasks_logo.png', height: 44),
+              icon: Image.asset('assets/tasks_logo.png', height: 25),
               label: 'Add Task',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/circles.png', height: 44),
+              icon: Image.asset('assets/circles.png', height: 25),
               label: 'Circles',
             ),
             BottomNavigationBarItem(
               icon: Container(
-                width: 45,
-                height: 45,
+                width: 26,
+                height: 26,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1), // Outline color & thickness
@@ -176,8 +204,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (isAdmin) // Show only if user is admin
                         Row(
                           children: [
-                            Text("Admin", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 14, 45, 42))),
-                            Image.asset('assets/admin-badge.png', height: 34, width: 34),
+                              Text("Admin", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 14, 45, 42))),
+                              Image.asset('assets/admin-badge.png', height: 34, width: 34),
                           ],
                         ),
                       
@@ -211,7 +239,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
-                    // Profile picture (unchanged)
+                    // Profile picture
                     GestureDetector(
                       onTap: () {
                         handleButtonPress("Profile Picture Tapped");
@@ -238,20 +266,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              //Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.w600)),
-                              Image.asset('assets/contacts.png', height: 26, width: 23,),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text("Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        handleButtonPress("Contacts Tapped");
+                        // Navigate to contacts/Friends page
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                //Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.w600)),
+                                Image.asset('assets/contacts.png', height: 26, width: 23,),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text("Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -260,47 +294,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
                 Padding(
+                  
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: const [
+                        
+                            //update these values with actual user data
+                            StatWidget(label: 'AGE', value: '28'),
+                            // Vertical line
+                            SizedBox(
+                              height: 40,
+                              child: VerticalDivider(
+                                thickness: 1,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            StatWidget(label: 'WEIGHT', value: '144'),
+                            // Vertical line
+                            SizedBox(
+                              height: 40,
+                              child: VerticalDivider(
+                                thickness: 1,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            StatWidget(label: 'HEIGHT', value: "5'5\""),
+                          ],
+                        ),
+                      ),
 
-                        //update these values with actual user data
-                        StatWidget(label: 'AGE', value: '28'),
-                        // Vertical line
-                        SizedBox(
-                          height: 40,
-                          child: VerticalDivider(
-                            thickness: 1,
-                            color: Colors.grey,
+                      Positioned(
+                        top: -10, // overlap the top
+                        right: -5,
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent, // transparent so gradient shows
+                                  child: Container(
+                                    padding: const EdgeInsets.all(24),
+                                    decoration: BoxDecoration(
+                                      gradient:  LinearGradient(
+                                        colors: [Color.fromARGB(255, 174, 242, 200), Color(0xFFD3F1F0)],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ), 
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Close icon top-right
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: GestureDetector(
+                                            onTap: () => Navigator.pop(context),
+                                            child: const Icon(Icons.close, color: Color.fromARGB(255, 0, 0, 0), size: 28),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+
+                                        Container(
+                                          width: double.infinity,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(255, 255, 255, 255),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(12),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              
+                                              //do something 
+                                            },
+                                            child: const Center(
+                                              child: Text(
+                                                "Update Profile Information",
+                                                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 16),
+
+                                        Container(
+                                          width: double.infinity,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color:  const Color.fromARGB(255, 255, 255, 255),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(12),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              // do something
+                                            },
+                                            child: const Center(
+                                              child: Text(
+                                                "Change Profile Picture",
+                                                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+
+                          child: Image.asset(
+                            'assets/edit-button.png',
+                            width: 28,
+                            height: 28,
                           ),
                         ),
-                        StatWidget(label: 'WEIGHT', value: '144'),
-                        // Vertical line
-                        SizedBox(
-                          height: 40,
-                          child: VerticalDivider(
-                            thickness: 1,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        StatWidget(label: 'HEIGHT', value: "5'5\""),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                 
                 ),
                 const SizedBox(height: 10),
 
                 //get user name from database
-                const Text(
-                  "GEEN VAN DIJK",
+                Text(
+                  '$firstName $lastName',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                 ),
                 const SizedBox(height: 10),
@@ -342,57 +479,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: const Color.fromARGB(117, 0, 0, 0), width: 1) ,
-                      //borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: CirclesWidget(circlesByCategory: circlesJoinedCurrUser),
+                    
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: const Border(
+                          top: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
+                          bottom: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // Navigate to circles page
-                            print("View All Circles tapped");
-                          },
-                            
-                          child: Container(
-                            height: 60,
-                            width: 109,
-                            padding: const EdgeInsets.all(1), // border thickness
-                            decoration: BoxDecoration(
-                              gradient:gradient.withOpacity(0.27),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            constraints: const BoxConstraints(maxWidth: 150),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white, // Chip background color
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              
-                              child: Text(
-                                "View All\nCircles",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                                softWrap: true,
-                              ),
-                            ),
-                          ),
+                      ),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CirclesWidget(circlesByCategory: circlesJoinedCurrUser),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -487,78 +594,81 @@ class CirclesWidget extends StatelessWidget {
 
   const CirclesWidget({required this.circlesByCategory, Key? key}) : super(key: key);
 
-  // Helper: Return icon based on category
   Icon _iconForCategory(String category) {
     switch (category.toLowerCase()) {
       case 'fitness':
-        return const Icon(Icons.monitor_heart, color: Color.fromARGB(255, 4, 4, 4));
+        return const Icon(Icons.monitor_heart, color: Colors.black);
       case 'wellness':
-        return const Icon(Icons.spa, color: Color.fromARGB(255, 3, 3, 3));
+        return const Icon(Icons.spa, color: Colors.black);
       case 'social':
-        return const Icon(Icons.diversity_1, color: Color.fromARGB(255, 20, 20, 20));
+        return const Icon(Icons.diversity_1, color: Colors.black);
       default:
-        return const Icon(Icons.auto_graph, color: Colors.grey);
+        return const Icon(Icons.auto_graph, color: Colors.black);
     }
   }
-@override
-Widget build(BuildContext context) {
-  //-----------Gradients--------------//
-  final gradient = const LinearGradient(
-    colors: [Colors.blue, Colors.purple, Colors.orange],
-  );
 
-  // Get first two categories only
-  final firstTwoEntries = circlesByCategory.entries.take(2).toList();
+  @override
+  Widget build(BuildContext context) {
+    final gradient = const LinearGradient(
+      colors: [Colors.blue, Colors.purple, Colors.orange],
+    );
 
-  return Wrap(
-    spacing: 12,
-    runSpacing: 12,
-    children: firstTwoEntries.map((entry) {
-      final category = entry.key;
-      final firstCircle = entry.value.isNotEmpty ? entry.value.first : 'No Circle';
+    // Flatten all circles from all categories into a single list of (category, circleName) pairs
+    final allCircles = circlesByCategory.entries
+        .expand((entry) => entry.value.map((circleName) => MapEntry(entry.key, circleName)))
+        .toList();
 
-      return Container(
-        padding: const EdgeInsets.all(1), // border thickness
-        width: 109,
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: gradient.withOpacity(0.27),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(9),
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _iconForCategory(category),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  firstCircle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+    return Row(
+      children: allCircles.map((entry) {
+        final category = entry.key;
+        final circleName = entry.value;
+
+        return Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: GestureDetector(
+            onTap: () {
+              print('Tapped on circle: $circleName in category: $category');
+            },
+            child: Container(
+              padding: const EdgeInsets.all(1),
+              width: 109,
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: gradient.withOpacity(0.27),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _iconForCategory(category),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        circleName,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      );
-    }).toList(),
-  );
+        );
+      }).toList(),
+    );
+  }
 }
-
-}
-
-
 
 
 
@@ -575,30 +685,38 @@ class TaskWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Container(
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(255, 138, 138, 0.35),
-          borderRadius: BorderRadius.circular(12),
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
         ),
-        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.1),
+
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.red,
+          ),
+        ),
         child: Row(
           children: [
-            Checkbox(
-              value: isChecked,
-              onChanged: onChanged,
-              activeColor: const Color.fromRGBO(255, 138, 138, 1),
-            ),
+          Icon(
+                Icons.check_box,
+                color: Colors.red,
+              ),
+            
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(taskName, style: const TextStyle(fontWeight: FontWeight.w500, color: Color.fromARGB(255, 135, 135, 135))),
+            Expanded(child: Text(taskName)),
+            Row(
+              children: [
+                const Icon(Icons.rocket_launch, size: 16, color: Colors.red),
+                const SizedBox(width: 4),
+              ],
             ),
-            Image.asset(
-              'assets/rocket.png', 
-              width: 43, 
-              height: 40,
-            )
           ],
         ),
       ),

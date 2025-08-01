@@ -73,7 +73,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
     if (hasCompleted) {
       Navigator.of(context).pushReplacementNamed('/userProfile');
     } else {
-      Navigator.of(context).pushReplacementNamed('/onboardingWizard');
+      Navigator.of(context).pushReplacementNamed('/userInformation');
     }
   } on FirebaseAuthException catch (e) {
     setState(() => _error = e.message);

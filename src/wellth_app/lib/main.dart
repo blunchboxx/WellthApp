@@ -16,7 +16,6 @@ import 'firebase_options.dart';
 import 'pages/custom_login_page.dart';
 import 'pages/register_page.dart';
 import 'package:wellth_app/auth/auth.dart';
-import 'pages/home_page.dart';
 import 'pages/onboarding_page_bio.dart';
 import 'pages/onboarding_page_permissions.dart';
 import 'pages/landing_page.dart';
@@ -24,10 +23,6 @@ import 'pages/onboarding_wizard_complete.dart';
 import 'pages/onboarding_wizard_join_circle.dart';
 import 'pages/onboarding_wizard_privacy.dart';
 import 'pages/information_carousel.dart';
-//Pages to be deleted if carousel is used
-import 'pages/onboarding_wizard_badges.dart';
-import 'pages/onboarding_page_carousel_circles.dart';
-import 'pages/onboarding_page_carousel_habits.dart';
 
 // Added from codelab
 
@@ -66,13 +61,8 @@ class MyApp extends StatelessWidget {
         '/onboardingJoinCircle': (context) => OnboardingJoinCircleScreen(),//Fourth page onboarding wizard
         '/onboardingPrivacy': (context) => OnboardingPrivacyScreen(),//fith page onboarding wizard
         '/onboardingComplete': (context) => OnboardingCompleteScreen(),//sixth/last page onboarding wizard
-        '/userProfile': (context) => HomePage(),
-        '/landingPage': (context) => LandingPageScreen(),
-
-        '/carouselCircles': (context) => OnboardingScreen_carousel_circles(),
-        '/carouselHabits': (context) => OnboardingScreen_carousel_habits(),
-        '/carouselBadges': (context) => OnboardingBadgesScreen(),
-      
+        '/userProfile': (context) => ProfileScreen(),
+        '/landingPage': (context) => LandingPageScreen(),     
       },
       //home: AuthPage(),
 
