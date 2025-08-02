@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart'; // Added from codelab
 import 'package:flutter/material.dart';
-import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/home.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:wellth_app/pages/register_page.dart';
@@ -87,7 +86,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CustomLoginPage(),
+      //home: CustomLoginPage(),
+      home: ProfileScreen(), // Initial screen for onboarding
 
       // onGenerateRoute 으로 인자 전달 처리
       onGenerateRoute: (RouteSettings settings) {
@@ -188,3 +188,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

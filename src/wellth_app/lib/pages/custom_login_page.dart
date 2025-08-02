@@ -28,6 +28,31 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
   bool _loading    = false;
   String? _error;
 
+  bool _checkingUserStatus = true; 
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists && mounted) {
+          Navigator.of(context).pushReplacementNamed('/userProfile');
+        }
+      } else {
+        // User is logged out, remain on login screen
+        if (mounted) {
+          setState(() {
+            _checkingUserStatus = false;
+          });
+        }
+      }
+    });
+  }
+
+
+
   void _signInWithGoogle() async{
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -94,6 +119,15 @@ void displayMessage (String message){
 
   @override
   Widget build(BuildContext context) {
+
+    // Is user already logged in? 
+    if (_checkingUserStatus) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+
     final gradient = const LinearGradient(
       colors: [Colors.blue, Colors.purple, Colors.orange],
     );

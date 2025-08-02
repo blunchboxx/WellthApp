@@ -1,7 +1,8 @@
 import 'dart:ffi';
 import 'package:wellth_app/pages/register_page.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnboardingScreen_bio extends StatefulWidget {
   
@@ -17,8 +18,11 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  
+  final TextEditingController feetController = TextEditingController();
+  final TextEditingController inchesController = TextEditingController();
 
   bool validateOnContinue = false;
 
@@ -169,17 +173,10 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
 
                                         child: Image.asset(
                                           'assets/onboarding-add-pfp.png',
-                                          height: 115,
+                                          height: 150,
                                           fit: BoxFit.cover,
                                         ),
 
-                                        //-----circle avatar -----//
-
-                                        /*child: CircleAvatar(
-                                          radius: 51.5,
-                                          backgroundImage: AssetImage('assets/onboarding-add-pfp.png'),
-                                        ),*/
-                                        
                                       ),
                                       Container(
                                         width: 24,
@@ -204,12 +201,12 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                                 children: [
                                   SizedBox(height: 10),
                                   //Row 1
-                                  _buildTextField("First Name *", firstNameController),
+                                  _buildTextField("First Name *", firstNameController, TextInputType.name),
 
                                   SizedBox(height: 10),
 
                                   //Row 2
-                                  _buildTextField("Last Name *", lastNameController),
+                                  _buildTextField("Last Name *", lastNameController, TextInputType.name),
                                 ],
                               ))
                             ],
@@ -219,18 +216,10 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                           Row(
                             children: [
                               //-----Age----/
-                              Expanded(child:_buildDropdown("Age *",
-                                List<String>.generate(69, (index) => (index + 12).toString()),
-                                selectedAge,
-                                (value) {
-                                  setState(() {
-                                    selectedAge = value;
-                                  });
-                                },
-                              )),
+                              Expanded(child: _buildTextField("Age *", ageController, TextInputType.number)),
 
                               SizedBox(width: 10),
-                              Expanded(child: _buildTextField("Phone Number *", phoneController)),
+                              Expanded(child: _buildTextField("Phone Number *", phoneController, TextInputType.phone)),
 
                             ],
                           ),
@@ -253,12 +242,20 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
 
                           SizedBox(height: 20),
                           Center(child: Text("Optional", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))),
+
                           SizedBox(height: 10),
+
+                          //Text("Height"),
+                          //SizedBox(height: 10),
                           Row(
                             children: [
-                              Expanded(child: _buildTextField("Height", heightController)),
+                              //Expanded(child: _buildTextField("Height (e.g. 5'8\")", heightController),),
+                              Expanded(
+                                child: _buildHeightField(),
+                              ),
+
                               SizedBox(width: 10),
-                              Expanded(child: _buildTextField("Weight", weightController)),
+                              Expanded(child: _buildTextField("Weight", weightController, TextInputType.number)),
                             ],
                           ),
                         ],
@@ -295,13 +292,56 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                     }
                   })),
                   SizedBox(width: 10),
-                  Expanded(child: _buildButtonGradient("Continue", () {
+
+                  Expanded(
+                    child: _buildButtonGradient("Continue", () async {
+                      validateOnContinue = true;
+
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          // Assuming you're using Firebase Auth to get the current user
+                          final uid = FirebaseAuth.instance.currentUser?.uid;
+
+                          if (uid == null) {
+                            throw Exception('User not logged in');
+                          }
+
+                          // Create user data map
+                          final userData = {
+                            'firstName': firstNameController.text.trim(),
+                            'lastName': lastNameController.text.trim(),
+                            'phone': phoneController.text.trim(),
+                            'weight': weightController.text.trim(),
+                            'age': ageController.text.trim(),
+                            'heightFeet': feetController.text.trim(),
+                            'heightInches': inchesController.text.trim(),
+                          };
+
+                          // Save to Firestore under the 'users' collection
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uid)
+                              .set(userData, SetOptions(merge: true));
+
+                          // Navigate after storing data
+                          Navigator.of(context).pushNamed('/userPermission');
+                        } catch (e) {
+                          // Handle errors (e.g., show SnackBar or dialog)
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${e.toString()}')),
+                          );
+                        }
+                      }
+                    }),
+                  ),
+
+                  /*Expanded(child: _buildButtonGradient("Continue", () {
                     validateOnContinue = true;
                     if (_formKey.currentState!.validate()) {
                       // Go to next page of onboarding wizard
                       Navigator.of(context).pushNamed('/userPermission');
                     }
-                  })),
+                  })),*/
                 ],
               )
             ],
@@ -311,163 +351,160 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
-        isDense: true,
-      ),
-      validator: (value) {
-        if (label.contains('*') && (value == null || value.isEmpty) && validateOnContinue) {
-          return 'Required';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildDropdown(String label, List<String> items, String? selectedValue, Function(String?) onChanged) {
-    return DropdownButtonFormField<String>(
-      value: selectedValue,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
-        isDense: true,
-      ),
-      items: items
-          .map((e) => DropdownMenuItem<String>(
-                child: Text(e),
-                value: e,
-              ))
-          .toList(),
-      onChanged: onChanged,
-      validator: (value) {
-        if (label.contains('*') && value == null && validateOnContinue) {
-          return 'Required';
-        }
-        return null;
-      },
-    );
-  }
+  Widget _buildTextField(String label, TextEditingController controller, TextInputType type) {
+    bool isRequired = label.contains('*');
+    String cleanLabel = label.replaceAll('*', '').trim();
 
 
-  //--------------- Geena's Button Design --------------//
-  /*Widget _buildButtonGradient(String text, VoidCallback onPressed) {
-    return SizedBox(
-      width: 169,
-      height: 41,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerRight,
-            end: Alignment.centerLeft,
-            colors: [
-              Colors.blue,
-              Color.fromARGB(238, 54, 122, 232),
-              Color.fromARGB(231, 98, 24, 203),
-              Colors.purple,
-              Color.fromARGB(211, 222, 57, 115),
-              Color.fromARGB(202, 255, 99, 71),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromARGB(72, 0, 0, 0),
-              blurRadius: 4,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            padding: EdgeInsets.zero, // Use zero if you're wrapping in SizedBox
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-          onPressed: onPressed,
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 25.0,
-              fontFamily: 'Inter',
-              color: Colors.white,
-              shadows: [
-                Shadow(offset: Offset(-1.0, -1), color: Color.fromARGB(72, 0, 0, 0)),
-                Shadow(offset: Offset(1, -1), color: Color.fromARGB(72, 0, 0, 0)),
-                Shadow(offset: Offset(1, 3.5), color: Color.fromARGB(72, 0, 0, 0)),
-                Shadow(offset: Offset(-1, 3.5), color: Color.fromARGB(72, 0, 0, 0)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 6.0, bottom: 4.0),
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black87,
+              ),
+              children: [
+                TextSpan(text: cleanLabel),
+                if (isRequired)
+                  TextSpan(
+                    text: ' *',
+                    style: TextStyle(color: Colors.red),
+                  ),
               ],
             ),
           ),
         ),
-      ),
+        Container(
+          height: 45,
+          width: 270,
+          decoration: BoxDecoration(
+            gradient: gradient.withOpacity(0.27),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(2),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: TextFormField(
+              controller: controller,
+              keyboardType: type,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 10),
+              ),
+              style: TextStyle(fontSize: 14),
+              validator: (value) {
+                if (isRequired &&
+                    (value == null || value.isEmpty) &&
+                    validateOnContinue) {
+                  return 'Required';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildButtonWhite(String text, VoidCallback onPressed) {
-    return SizedBox(
-      width: 169,
-      height: 41,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerRight,
-            end: Alignment.centerLeft,
-            colors: [
-              Colors.blue.withOpacity(0.25),
-              Color.fromARGB(238, 54, 122, 232).withOpacity(0.25),
-              Color.fromARGB(231, 98, 24, 203).withOpacity(0.25),
-              Colors.purple.withOpacity(0.25),
-              Color.fromARGB(211, 222, 57, 115).withOpacity(0.25),
-              Color.fromARGB(202, 255, 99, 71).withOpacity(0.25),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-              BoxShadow(
-                color: Color.fromARGB(72, 0, 0, 0),
-                blurRadius: 4,
-                offset: Offset(0, 4),
+
+  Widget _buildDropdown(
+    String label,
+    List<String> items,
+    String? selectedValue,
+    Function(String?) onChanged,
+  ) {
+    bool isRequired = label.contains('*');
+    String cleanLabel = label.replaceAll('*', '').trim();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 6.0, bottom: 4.0),
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black87,
               ),
-            ],
-        ),
-        padding: EdgeInsets.all(3), 
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              shadowColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              children: [
+                TextSpan(text: cleanLabel),
+                if (isRequired)
+                  TextSpan(
+                    text: ' *',
+                    style: TextStyle(color: Colors.red),
+                  ),
+              ],
             ),
-            onPressed: onPressed,
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontFamily: 'Inter',
-                  color: Color.fromRGBO(100, 89, 89, 100),
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  gradient: gradient.withOpacity(0.27),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedValue,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      isDense: true,
+                    ),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    items: items
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: onChanged,
+                    validator: (value) {
+                      if (isRequired && value == null && validateOnContinue) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
-      ),
+      ],
     );
-  }*/
+  }
+
+
 
 
 
@@ -547,6 +584,108 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
       ),
     );
   }
+
+  Widget _buildHeightField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 6.0, bottom: 4.0),
+          child: RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black87,
+              ),
+              children: [
+                TextSpan(text: 'Height'),
+              ],
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            // Feet
+            Expanded(
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  gradient: gradient.withOpacity(0.27),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: feetController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'ft',
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    style: TextStyle(fontSize: 14),
+                    validator: (value) {
+                      final feet = int.tryParse(value ?? '');
+                      if ((value?.isNotEmpty ?? false) && (feet == null || feet < 0 || feet > 8)) {
+                        return '0–8';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+
+            // Inches
+            Expanded(
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  gradient: gradient.withOpacity(0.27),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: inchesController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'in',
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    style: TextStyle(fontSize: 14),
+                    validator: (value) {
+                      final inches = int.tryParse(value ?? '');
+                      if ((value?.isNotEmpty ?? false) && (inches == null || inches < 0 || inches > 11)) {
+                        return '0–11';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
 
 }
 

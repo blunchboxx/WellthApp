@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:wellth_app/auth/login_or_register.dart';
 import 'package:wellth_app/pages/profile_page.dart';
 import 'package:wellth_app/pages/custom_login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';

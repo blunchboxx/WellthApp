@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wellth_app/pages/register_page.dart';
 import 'pages/custom_login_page.dart';
 import 'home.dart';
-import 'auth/login_or_register.dart';
 
 /// Wraps your app and decides whether to show the login page or HomeScreen.
 class AuthGate extends StatelessWidget {

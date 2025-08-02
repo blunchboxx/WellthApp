@@ -53,8 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _currentIndex = 4; // Profile tab index by default
   final List<String> navLabels = ['Feed', 'Board', 'Add Task', 'Circles', 'Profile'];
 
-  bool isAdmin = true; // Example admin status, replace with actual logic
-
 
   final List<String> badgesEarnedCurrUser = [
     'temp',
@@ -112,16 +110,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = userData?['firstName']?['stringValue']?.toString().toUpperCase() ?? 'USER';
-    final lastName = userData?['lastName']?['stringValue']?.toString().toUpperCase() ?? 'NO NAME';
 
-    final bio = userData?['bio'] ?? '';
-    final age = userData?['age'] ?? '';
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return Center(child: Text('User not logged in'));
+    }
+  
     
     bool isAdmin = userData?['isAdmin']?['booleanValue'] ?? false;
-
-
-    print(firstName + ' ' + lastName);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -180,360 +177,386 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFAEF2C8), Color(0xFFD3F1F0), Color(0xffffffff)],
-            begin: Alignment.topCenter,
-            end: Alignment.center,
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          handleButtonPress("Settings Tapped"); // navigate to settings page  
-                        },
-                        child: Image.asset('assets/settings.png', height: 34),
-                      ),
-                      
-                      if (isAdmin) // Show only if user is admin
-                        Row(
-                          children: [
-                              Text("Admin", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 14, 45, 42))),
-                              Image.asset('assets/admin-badge.png', height: 34, width: 34),
-                          ],
-                        ),
-                      
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/login'); // Navigate to login page
-                        },
-                        child: Icon(Icons.logout, size: 34),
-                      )
-                    ],
-                  ),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error loading profile'));
+          }
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+
+          final firstName = userData?['firstName']?.toString().toUpperCase() ?? 'USER';
+          final lastName = userData?['lastName']?.toString().toUpperCase() ?? 'NO NAME';
+
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFAEF2C8), Color(0xFFD3F1F0), Color(0xffffffff)],
+                begin: Alignment.topCenter,
+                end: Alignment.center,
+              ),
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Column(
                   children: [
-                    // Shift "My Wellth" lower
                     Padding(
-                      padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.bold)),
-                              Image.asset('assets/img2-car.png', height: 17),
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              handleButtonPress("Settings Tapped"); // navigate to settings page  
+                            },
+                            child: Image.asset('assets/settings.png', height: 34),
                           ),
-                          const SizedBox(height: 4),
-                          Text("500", style: TextStyle(fontWeight: FontWeight.bold)),
+                          
+                          if (isAdmin) // Show only if user is admin
+                            Row(
+                              children: [
+                                  Text("Admin", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 14, 45, 42))),
+                                  Image.asset('assets/admin-badge.png', height: 34, width: 34),
+                              ],
+                            ),
+                          
+                          GestureDetector(
+                            onTap: () async {
+                              await FirebaseAuth.instance.signOut(); // Properly sign out the user
+                              Navigator.pushReplacementNamed(context, '/login');
+                            },
+                            child: Icon(Icons.logout, size: 34),
+                          )
                         ],
                       ),
                     ),
-
-                    // Profile picture
-                    GestureDetector(
-                      onTap: () {
-                        handleButtonPress("Profile Picture Tapped");
-                        // You can navigate or show a modal here
-                      },
-                      child: Container(
-                        height: 154,
-                        width: 189,
-                        margin: const EdgeInsets.only(left: 16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(34),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.35),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(34),
-                          child: Image.asset('assets/geenas-pfp-because-the-profile-looked-ugly.jpeg', fit: BoxFit.cover),
-                        ),
-                      ),
-                    ),
-
-                    GestureDetector(
-                      onTap: () {
-                        handleButtonPress("Contacts Tapped");
-                        // Navigate to contacts/Friends page
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                //Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.w600)),
-                                Image.asset('assets/contacts.png', height: 26, width: 23,),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text("Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-                Padding(
-                  
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                        
-                            //update these values with actual user data
-                            StatWidget(label: 'AGE', value: '28'),
-                            // Vertical line
-                            SizedBox(
-                              height: 40,
-                              child: VerticalDivider(
-                                thickness: 1,
-                                color: Colors.grey,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Shift "My Wellth" lower
+                        Padding(
+                          padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Image.asset('assets/img2-car.png', height: 17),
+                                ],
                               ),
-                            ),
-                            StatWidget(label: 'WEIGHT', value: '144'),
-                            // Vertical line
-                            SizedBox(
-                              height: 40,
-                              child: VerticalDivider(
-                                thickness: 1,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            StatWidget(label: 'HEIGHT', value: "5'5\""),
-                          ],
-                        ),
-                      ),
-
-                      Positioned(
-                        top: -10, // overlap the top
-                        right: -5,
-                        child: GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  backgroundColor: Colors.transparent, // transparent so gradient shows
-                                  child: Container(
-                                    padding: const EdgeInsets.all(24),
-                                    decoration: BoxDecoration(
-                                      gradient:  LinearGradient(
-                                        colors: [Color.fromARGB(255, 174, 242, 200), Color(0xFFD3F1F0)],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                      ), 
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // Close icon top-right
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: GestureDetector(
-                                            onTap: () => Navigator.pop(context),
-                                            child: const Icon(Icons.close, color: Color.fromARGB(255, 0, 0, 0), size: 28),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-
-                                        Container(
-                                          width: double.infinity,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: const Color.fromARGB(255, 255, 255, 255),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: InkWell(
-                                            borderRadius: BorderRadius.circular(12),
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              
-                                              //do something 
-                                            },
-                                            child: const Center(
-                                              child: Text(
-                                                "Update Profile Information",
-                                                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 16),
-
-                                        Container(
-                                          width: double.infinity,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color:  const Color.fromARGB(255, 255, 255, 255),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: InkWell(
-                                            borderRadius: BorderRadius.circular(12),
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              // do something
-                                            },
-                                            child: const Center(
-                                              child: Text(
-                                                "Change Profile Picture",
-                                                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-
-                          child: Image.asset(
-                            'assets/edit-button.png',
-                            width: 28,
-                            height: 28,
+                              const SizedBox(height: 4),
+                              Text("500", style: TextStyle(fontWeight: FontWeight.bold)),
+                            ],
                           ),
                         ),
+              
+                        // Profile picture
+                        GestureDetector(
+                          onTap: () {
+                            handleButtonPress("Profile Picture Tapped");
+                            // You can navigate or show a modal here
+                          },
+                          child: Container(
+                            height: 154,
+                            width: 189,
+                            margin: const EdgeInsets.only(left: 16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(34),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.35),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(34),
+                              child: Image.asset('assets/geenas-pfp-because-the-profile-looked-ugly.jpeg', fit: BoxFit.cover),
+                            ),
+                          ),
+                        ),
+              
+                        GestureDetector(
+                          onTap: () {
+                            handleButtonPress("Contacts Tapped");
+                            // Navigate to contacts/Friends page
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 90,left: 12), // adjust this value to move it down
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    //Text("My Wellth ", style: TextStyle(fontWeight: FontWeight.w600)),
+                                    Image.asset('assets/contacts.png', height: 26, width: 23,),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text("Contacts", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+              
+                      ],
+                    ),
+              
+                    const SizedBox(height: 16),
+                    Padding(
+                      
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                            
+                                //update these values with actual user data
+                                StatWidget(label: 'AGE', value: userData?['age'] != null? '${userData!['age']}': '-',),
+                                // Vertical line
+                                SizedBox(
+                                  height: 40,
+                                  child: VerticalDivider(
+                                    thickness: 1,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                StatWidget(label: 'WEIGHT', value: userData?['weight'] != null? '${userData!['weight']} lbs': '-',),
+                                // Vertical line
+                                SizedBox(
+                                  height: 40,
+                                  child: VerticalDivider(
+                                    thickness: 1,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                StatWidget(label: 'HEIGHT',
+                                                value: userData?['heightFeet'] != null && userData?['heightInches'] != null
+                                                ? '${userData!['heightFeet']}\' ${userData!['heightInches']}"' 
+                                                : '-',
+                                ),
+              
+                              ],
+                            ),
+                          ),
+              
+                          Positioned(
+                            top: -10, // overlap the top
+                            right: -5,
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      backgroundColor: Colors.transparent, // transparent so gradient shows
+                                      child: Container(
+                                        padding: const EdgeInsets.all(24),
+                                        decoration: BoxDecoration(
+                                          gradient:  LinearGradient(
+                                            colors: [Color.fromARGB(255, 174, 242, 200), Color(0xFFD3F1F0)],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ), 
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // Close icon top-right
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child: GestureDetector(
+                                                onTap: () => Navigator.pop(context),
+                                                child: const Icon(Icons.close, color: Color.fromARGB(255, 0, 0, 0), size: 28),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+              
+                                            Container(
+                                              width: double.infinity,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(255, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: InkWell(
+                                                borderRadius: BorderRadius.circular(12),
+                                                onTap: () async {
+                                                  Navigator.pop(context);
+                                                  final user = FirebaseAuth.instance.currentUser;
+                                                  if (user != null) {
+                                                    _showUpdateDialog(context, user.uid);
+                                                    
+                                                  }
+                                                },
+              
+                                                child: const Center(
+                                                  child: Text(
+                                                    "Update Profile Information",
+                                                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+              
+                                            const SizedBox(height: 16),
+              
+                                            Container(
+                                              width: double.infinity,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color:  const Color.fromARGB(255, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: InkWell(
+                                                borderRadius: BorderRadius.circular(12),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  // do something
+                                                },
+                                                child: const Center(
+                                                  child: Text(
+                                                    "Change Profile Picture",
+                                                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+              
+                              child: Image.asset(
+                                'assets/edit-button.png',
+                                width: 28,
+                                height: 28,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                 
-                ),
-                const SizedBox(height: 10),
-
-                //get user name from database
-                Text(
-                  '$firstName $lastName',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
+                      
+                    ),
+                    const SizedBox(height: 10),
+              
+                    //get user name from database
+                    Text(
+                      '$firstName $lastName',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16.0, 0, 1.0, 0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Recently Earned Badges", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        BadgeWidget(badgesEarned: badgesEarnedCurrUser), // Pass the badgesEarnedCurrUser list
+                        SizedBox(width: 1),
+                        GestureDetector(
+                          onTap: () {
+                            //  navigate to badges page
+                            print("View All Badges tapped");
+                          },
+                          child: Image.asset(
+                            'assets/view-all-badges.png',
+                            height: 48,
+                            width: 48,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
                     const Padding(
-                      padding: EdgeInsets.fromLTRB(16.0, 0, 1.0, 0),
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Recently Earned Badges", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        child: Text("My Circles", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                       ),
                     ),
                     const SizedBox(height: 6),
-                    BadgeWidget(badgesEarned: badgesEarnedCurrUser), // Pass the badgesEarnedCurrUser list
-                    SizedBox(width: 1),
-                    GestureDetector(
-                      onTap: () {
-                        //  navigate to badges page
-                        print("View All Badges tapped");
-                      },
-                      child: Image.asset(
-                        'assets/view-all-badges.png',
-                        height: 48,
-                        width: 48,
-                        fit: BoxFit.contain,
+              
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: const Border(
+                              top: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
+                              bottom: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CirclesWidget(circlesByCategory: circlesJoinedCurrUser),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ),
+              
+                    const SizedBox(height: 16),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Completed Tasks", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    // Scrollable completed tasks list inside fixed height box
+                    SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: completedTasks.length,
+                        itemBuilder: (context, index) {
+                          return TaskWidget(
+                            taskName: completedTasks[index],
+                            isChecked: true,
+                            onChanged: null, // disables checkbox interaction
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 8),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("My Circles", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                  ),
-                ),
-                const SizedBox(height: 6),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: const Border(
-                          top: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
-                          bottom: BorderSide(color: Color.fromARGB(117, 0, 0, 0), width: 1),
-                        ),
-                      ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CirclesWidget(circlesByCategory: circlesJoinedCurrUser),
-                          ],
-                        ),
-                      ),
-                    ),
-                ),
-
-                const SizedBox(height: 16),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Completed Tasks", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Scrollable completed tasks list inside fixed height box
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    itemCount: completedTasks.length,
-                    itemBuilder: (context, index) {
-                      return TaskWidget(
-                        taskName: completedTasks[index],
-                        isChecked: true,
-                        onChanged: null, // disables checkbox interaction
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }
@@ -727,3 +750,101 @@ class TaskWidget extends StatelessWidget {
     );
   }
 }
+
+void _showUpdateDialog(BuildContext context, String uid) {
+  final weightController = TextEditingController();
+  final heightFeetController = TextEditingController();
+  final heightInchesController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255), // transparent so gradient shows
+      title: const Text("Update Height & Weight"),
+      content: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient:  LinearGradient(
+            colors: [Color.fromARGB(255, 174, 242, 200), Color(0xFFD3F1F0)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ), 
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: Colors.teal, // Focused color
+            ),
+            inputDecorationTheme: const InputDecorationTheme(
+              border: UnderlineInputBorder(),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.teal), // Change the focused underline color
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: weightController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Weight (lbs)'),
+              ),
+              TextField(
+                controller: heightFeetController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Height (feet)'),
+              ),
+              TextField(
+                controller: heightInchesController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Height (inches)'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black, // Text color
+          ),
+          child: const Text("Cancel"),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.black, // Text color
+            backgroundColor: Colors.white, // Optional: change background to white
+          ),
+          child: const Text("Save"),
+          onPressed: () async {
+            final weight = int.tryParse(weightController.text);
+            final heightFeet = int.tryParse(heightFeetController.text);
+            final heightInches = int.tryParse(heightInchesController.text);
+
+            if (weight != null && heightFeet != null && heightInches != null) {
+              await FirebaseFirestore.instance.collection('users').doc(uid).update({
+                'weight': weight,
+                'heightFeet': heightFeet,
+                'heightInches': heightInches,
+              });
+              Navigator.of(context).pop(); // Close the dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profile updated!')),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter valid numbers.')),
+              );
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+
+
