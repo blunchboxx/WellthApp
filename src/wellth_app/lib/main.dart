@@ -86,8 +86,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: CustomLoginPage(),
-      home: ProfileScreen(), // Initial screen for onboarding
+      home: CustomLoginPage(),
+      //home: ProfileScreen(), // Initial screen for onboarding
 
       // onGenerateRoute 으로 인자 전달 처리
       onGenerateRoute: (RouteSettings settings) {

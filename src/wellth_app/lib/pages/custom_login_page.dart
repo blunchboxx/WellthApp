@@ -38,7 +38,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
       if (user != null) {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (doc.exists && mounted) {
-          Navigator.of(context).pushReplacementNamed('/userProfile');
+          Navigator.of(context).pushReplacementNamed('/landingPage');
         }
       } else {
         // User is logged out, remain on login screen
@@ -64,7 +64,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
 
     return FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       // Navigate to home page or do something after successful sign-in
-      Navigator.of(context).pushNamed('/userProfile');
+      Navigator.of(context).pushNamed('/landingPage');
     }).catchError((error) {
       // Handle error
       displayMessage(error.toString());
