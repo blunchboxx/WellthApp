@@ -27,7 +27,7 @@ class LandingPageScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<LandingPageScreen> {
-  int _currentIndex = 4;
+  int _currentIndex = 2;
   // Growable list of tasks
   List<Task> quests = List<Task>.from([
     Task('Walk 10k steps', 5, completed: true),
@@ -451,10 +451,8 @@ class _HomeScreenState extends State<LandingPageScreen> {
     setState(() => _currentIndex = index);
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/CircleFeed');
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, '/CircleDetail');
         break;
       case 2:
         break;
