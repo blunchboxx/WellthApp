@@ -6,6 +6,7 @@ import 'package:wellth_app/pages/register_page.dart';
 import 'package:wellth_app/pages/profile_page.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart'; // Used for database functionality
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
@@ -39,6 +40,7 @@ var db = FirebaseFirestore.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseAuth.instance.signOut();
 
   runApp(const MyApp(clientId: clientId));
 }
@@ -86,11 +88,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CustomLoginPage(),
+
+      //home: CustomLoginPage(),
       //home: ProfileScreen(), // Initial screen for onboarding
       //home: OnboardingScreen_bio(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.hasData) {
+            return const LandingPageScreen();
+          }
+          return const CustomLoginPage();
+        },
+      ),
 
-      // onGenerateRoute 으로 인자 전달 처리
       onGenerateRoute: (RouteSettings settings) {
         final args = settings.arguments as Map<String, dynamic>?;
 
@@ -189,4 +205,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
