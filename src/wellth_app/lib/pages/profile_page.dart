@@ -277,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(34),
-                              child: Image.asset('assets/geenas-pfp-because-the-profile-looked-ugly.jpeg', fit: BoxFit.cover),
+                              child: Image.asset('assets/temp-pfp-2.png', fit: BoxFit.cover),
                             ),
                           ),
                         ),

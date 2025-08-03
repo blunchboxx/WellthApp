@@ -688,5 +688,3 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
 
 
 }
-
-

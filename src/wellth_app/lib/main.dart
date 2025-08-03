@@ -88,6 +88,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: CustomLoginPage(),
       //home: ProfileScreen(), // Initial screen for onboarding
+      //home: OnboardingScreen_bio(),
 
       // onGenerateRoute 으로 인자 전달 처리
       onGenerateRoute: (RouteSettings settings) {

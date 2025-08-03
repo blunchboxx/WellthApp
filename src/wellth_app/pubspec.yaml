@@ -119,7 +119,8 @@ flutter:
       - assets/settings.png
       - assets/contacts.png
       - assets/edit-button.png
-      - assets/geenas-pfp-because-the-profile-looked-ugly.jpeg
+      - assets/temp-pfp-1.png
+      - assets/temp-pfp-2.png
       - assets/temp-badge.png
       - assets/view-all-badges.png
       - assets/rocket.png
