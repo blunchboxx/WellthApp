@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Circles':
-        Navigator.pushNamed(context, '/landingPage');
+        Navigator.pushNamed(context, '/Circles');
         break;
       case 'Profile':
         // Already on Profile page, no action needed
