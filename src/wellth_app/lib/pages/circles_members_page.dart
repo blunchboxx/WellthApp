@@ -210,8 +210,20 @@ class _CircleMembersPageState extends State<CircleMembersPage> {
           currentIndex: 3,
           onTap: (index) {
             switch (index) {
+              case 0:
+                Navigator.pushReplacementNamed(context, '/landingPage');
+                break;
+              case 1:
+                Navigator.pushReplacementNamed(context, '/landingPage');
+                break;
+              case 2:
+                Navigator.pushReplacementNamed(context, '/landingPage');
+                break;
               case 3:
                 Navigator.pushReplacementNamed(context, '/Circles');
+                break;
+              case 4:
+                Navigator.pushReplacementNamed(context, '/userProfile');
                 break;
               // case 0: Navigator.pushReplacementNamed(context, '/Feed'); break;
               // case 1: Navigator.pushReplacementNamed(context, '/Board'); break;
