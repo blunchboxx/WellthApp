@@ -27,6 +27,8 @@ import 'pages/circles_members_page.dart';
 import 'pages/circles_new_announcement_page.dart';
 import 'pages/circles_page.dart';
 
+String? globalProfileImagePath;
+
 // Added from codelab
 
 // Sets Google API key for Google sign-in
@@ -129,7 +131,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => LandingPageScreen());
 
           case '/userProfile':
-            return MaterialPageRoute(builder: (_) => ProfileScreen());
+            return MaterialPageRoute(builder: (_) => ProfileScreen(profilePicturePath: globalProfileImagePath));
 
           case '/circlesAnnouncementDetail':
             if (args == null) {

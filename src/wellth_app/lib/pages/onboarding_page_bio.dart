@@ -29,6 +29,8 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
   String? selectedAge;
   String? selectedGoal;
 
+  String? selectedImagePath;
+
   //-----------Gradients--------------//
   final gradient = const LinearGradient(
     colors: [Colors.blue, Colors.purple, Colors.orange],
@@ -166,36 +168,78 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                                     alignment: Alignment.bottomRight,
                                     children: [
                                       GestureDetector(
-                                        onTap: (){
-                                          //------Add upload PfP function-----------//
-                                          print("Add pfp Tapped");
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                              title: const Text("Choose Temporary Profile Picture"),
+                                              content: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        selectedImagePath = 'assets/temp-pfp-1.png';
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Image.asset(
+                                                      'assets/temp-pfp-1.png',
+                                                      width: 80,
+                                                      height: 80,
+                                                    ),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        selectedImagePath = 'assets/temp-pfp-2.png';
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Image.asset(
+                                                      'assets/temp-pfp-2.png',
+                                                      width: 80,
+                                                      height: 80,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
                                         },
 
-                                        child: Image.asset(
-                                          'assets/onboarding-add-pfp.png',
-                                          height: 150,
-                                          fit: BoxFit.cover,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(34),
+                                          child: Image.asset(
+                                            selectedImagePath ?? 'assets/onboarding-add-pfp.png',
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
 
                                       ),
-                                      Container(
-                                        width: 24,
-                                        height: 24,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white,
+                                      if(selectedImagePath == null) // Show default icon if no image selected
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          child: Image.asset(
+                                            'assets/image-icon.png',
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
-                                        child: Image.asset(
-                                          'assets/image-icon.png',
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
 
                                     ],
                                   ),
                                   
                                 ],
                               ),
+                              
+
                               SizedBox(width: 15),
                               Expanded(child: Column(
                                 children: [

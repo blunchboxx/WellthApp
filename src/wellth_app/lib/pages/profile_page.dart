@@ -1,9 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wellth_app/pages/onboarding_wizard_join_circle.dart';
+import 'package:wellth_app/pages/onboarding_page_bio.dart';
 
 
 class ProfileScreen extends StatefulWidget {
+
+  final String? profilePicturePath;
+
+  ProfileScreen({this.profilePicturePath});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -30,11 +37,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   );
 
   Map<String, dynamic>? userData;
-
+  
+  //final String profilePicturePath = 'assets/temp-pfp-1.png'; // Placeholder for profile picture
+  late final String profilePicturePath;
+  
   @override
   void initState() {
     super.initState();
+    profilePicturePath = widget.profilePicturePath ?? 'assets/onboarding-add-pfp.png';
     fetchCurrentUser();
+    loadUserCircles();
   }
 
   Future<void> fetchCurrentUser() async {
@@ -53,21 +65,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _currentIndex = 4; // Profile tab index by default
   final List<String> navLabels = ['Feed', 'Board', 'Add Task', 'Circles', 'Profile'];
 
+  
 
   final List<String> badgesEarnedCurrUser = [
     'temp',
     'temp',
     'temp',
   ];
-
-  final Map<String, List<String>> circlesJoinedCurrUser = {
-    'Fitness': ['Hard 75 Group', 'Morning Joggers'],
-    'Wellness': ['Open Mind Happy Life', 'Meditation Circle'],
-    'Social': ['Book Club', 'Movie Fans'],
-    'Other': ['Random Club', 'Hydration Circle'],
+  late Map<String, List<String>> circlesJoinedCurrUser = {
+    'Fitness': [],
+    'Wellness': [],
+    'Social': [],
+    'Other': [],
   };
 
 
+
+  Future<Map<String, List<String>>> getUserCirclesByCategory() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) throw Exception('User not logged in');
+
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) throw Exception('User document not found');
+
+      final userData = userDoc.data();
+      final List<dynamic> circleIds = userData?['circles'] ?? [];
+
+      Map<String, List<String>> categorizedCircles = {};
+
+      for (String circleId in circleIds) {
+        final circleDoc = await FirebaseFirestore.instance.collection('circles').doc(circleId).get();
+
+        if (!circleDoc.exists) continue;
+
+        final data = circleDoc.data();
+        final rawCategory = data?['category'];
+        final circleName = data?['name'];
+
+        if (rawCategory is! String || circleName is! String) continue;
+
+        final category = rawCategory[0].toUpperCase() + rawCategory.substring(1).toLowerCase();
+
+        categorizedCircles.putIfAbsent(category, () => []);
+        categorizedCircles[category]!.add(circleName);
+      }
+
+      return categorizedCircles;
+    } catch (e) {
+      print('Error getting user circles by category: $e');
+      return {};
+    }
+  }
+
+
+  void loadUserCircles() async {
+    circlesJoinedCurrUser = await getUserCirclesByCategory();
+    setState(() {}); // Refresh UI after data loads
+  }
   
   void handleButtonPress(String label) {
     print("Button pressed: $label");
@@ -83,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Circles':
-        Navigator.pushNamed(context, '/landingPage');
+        Navigator.pushNamed(context, '/circlesAnnouncements');
         break;
       case 'Profile':
         // Already on Profile page, no action needed
@@ -112,6 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
 
     final user = FirebaseAuth.instance.currentUser;
+    loadCircles();
 
     if (user == null) {
       return Center(child: Text('User not logged in'));
@@ -167,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: BoxShape.circle,
                   border: Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1), // Outline color & thickness
                   image: DecorationImage(
-                    image: AssetImage('assets/geenas-pfp-because-the-profile-looked-ugly.jpeg'),
+                    image: AssetImage(profilePicturePath),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -277,7 +334,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(34),
-                              child: Image.asset('assets/temp-pfp-2.png', fit: BoxFit.cover),
+                              child: Image.asset(profilePicturePath, fit: BoxFit.cover),
                             ),
                           ),
                         ),
@@ -520,7 +577,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CirclesWidget(circlesByCategory: circlesJoinedCurrUser),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: CirclesWidget(circlesByCategory: circlesJoinedCurrUser)
+                                ),
                               ],
                             ),
                           ),
