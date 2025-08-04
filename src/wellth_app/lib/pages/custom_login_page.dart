@@ -26,6 +26,7 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
   final _emailCtrl = TextEditingController();
   final _pwCtrl    = TextEditingController();
   bool _loading    = false;
+  bool _obscureText = true;
   String? _error;
 
   bool _checkingUserStatus = true; 
@@ -35,21 +36,52 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
     super.initState();
 
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      if (user != null) {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-        if (doc.exists && mounted) {
-          Navigator.of(context).pushReplacementNamed('/landingPage');
-        }
-      } else {
-        // User is logged out, remain on login screen
-        if (mounted) {
-          setState(() {
-            _checkingUserStatus = false;
-          });
-        }
+    if (user == null) {
+      // still on the login page
+      if (mounted) setState(() => _checkingUserStatus = false);
+      return;
+    }
+
+    debugPrint('User signed in: UID=${user.uid}, email=${user.email}');
+
+
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final doc = await userRef.get();
+    if (!doc.exists) {
+      // brand-new user → create their profile and send to onboarding
+      await userRef.set({
+        'email': user.email,
+      'username': "", // To be collected later in user_information
+      'firstName': "",
+      'lastName': "",
+      'age': -1,
+      'bio': "",
+      'createdAt': FieldValue.serverTimestamp(),
+      'hasCompletedOnboarding': false,
+        // …etc…
+      });
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/userInformation');
       }
-    });
-  }
+    } else {
+      // existing user → decide based on the flag
+      final hasCompleted = doc.data()?['hasCompletedOnboarding'] == true;
+      debugPrint('has completed onboarding?=${hasCompleted}');
+       var route = '/landingPage';
+      if(hasCompleted == false)
+      {
+        route = '/userInformation';
+        debugPrint('route has been set to /userInformation, Route: $route');
+
+      }
+      if (mounted) {
+                debugPrint('route at time of navigation: $route');
+
+        Navigator.of(context).pushReplacementNamed(route);
+      }
+    }
+  });
+}
 
 
 
@@ -62,9 +94,10 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
       idToken: googleAuth?.idToken,
     );
 
-    return FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+    return FirebaseAuth.instance.signInWithCredential(credential).then((value) async {
       // Navigate to home page or do something after successful sign-in
-      Navigator.of(context).pushNamed('/landingPage');
+
+
     }).catchError((error) {
       // Handle error
       displayMessage(error.toString());
@@ -88,24 +121,15 @@ class _CustomLoginPageState extends State<CustomLoginPage> {
       throw FirebaseAuthException(code: 'no-user', message: 'No user is currently signed in');
     }
 
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    final hasCompleted = doc.data()?['hasCompletedOnboarding'] == true;
-
-    if (hasCompleted) {
-      Navigator.of(context).pushReplacementNamed('/userProfile');
-    } else {
-      Navigator.of(context).pushReplacementNamed('/userInformation');
-    }
+    
   } on FirebaseAuthException catch (e) {
     setState(() => _error = e.message);
   } finally {
     if (mounted) setState(() => _loading = false);
     }
   }
+
+  
 
 // display dialog message
 void displayMessage (String message){
@@ -306,14 +330,37 @@ void displayMessage (String message){
                           ),
                           child: TextField(
                             controller: _pwCtrl,
-                            obscureText: true,
-                            decoration: const InputDecoration(
+                            obscureText: _obscureText,
+                            decoration: InputDecoration(
                             hintText: 'Password',
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            isDense: false, // Reduce height
+                            contentPadding: const EdgeInsets.only(bottom: 8, left: 16, right: 16, top:8),
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 32, // Remove default width
+                              minHeight: 32, // Remove default height
                             ),
+                            suffixIcon: IconButton(
+                              iconSize: 20,
+                              padding: const EdgeInsets.only(bottom: 0, right: 5), // Remove default padding
+                              icon: Icon(
+                                // switch icon based on current state
+                                _obscureText
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText = !_obscureText;
+                                });
+                              },
+                            ),
+                            
+                            
+                            ),
+                      
                           ),
                           ),
                         ),
@@ -459,7 +506,7 @@ void displayMessage (String message){
                                 ),
           
                                 Transform.translate(
-                                  offset: const Offset(0, -2), 
+                                  offset: const Offset(-4, -2), 
                                   child: Container(
                                     height: 2,       
                                     width: 125,      

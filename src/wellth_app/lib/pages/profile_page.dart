@@ -139,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, '/landingPage');
         break;
       case 'Circles':
-        Navigator.pushNamed(context, '/circlesAnnouncements');
+        Navigator.pushNamed(context, '/Circles');
         break;
       case 'Profile':
         // Already on Profile page, no action needed
@@ -175,7 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   
     
-    bool isAdmin = userData?['isAdmin']?['booleanValue'] ?? false;
+
+
+    debugPrint('userData: $userData');
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -237,6 +240,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots(),
         builder: (context, snapshot) {
+
+
+
           if (snapshot.hasError) {
             return Center(child: Text('Error loading profile'));
           }
@@ -244,6 +250,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Center(child: CircularProgressIndicator());
           }
           final userData = snapshot.data!.data() as Map<String, dynamic>?;
+          final isAdmin = (userData?['isAppAdmin'] as bool?) ?? false;
+
 
           final firstName = userData?['firstName']?.toString().toUpperCase() ?? 'USER';
           final lastName = userData?['lastName']?.toString().toUpperCase() ?? 'NO NAME';
