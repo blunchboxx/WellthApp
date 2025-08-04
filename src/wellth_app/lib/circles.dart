@@ -4,13 +4,14 @@ import 'package:firebase_core/firebase_core.dart'; // Added from codelab
 import 'package:flutter/material.dart';
 
 // Create a new circle and make user admin
-Future<void> createCircle(String circleName, String description) async {
+Future<void> createCircle(String circleName, String description, String category) async {
   final user = FirebaseAuth.instance.currentUser;
   final circlesRef = FirebaseFirestore.instance.collection('circles');
 
   final newCircle = await circlesRef.add({
     'name': circleName,
     'description': description,
+    'category': category,
     'createdBy': user!.uid,
     'members': [user.uid],
     'roles': {user.uid: 'admin'},
