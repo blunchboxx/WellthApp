@@ -27,6 +27,7 @@ import 'pages/circles_feeds_page.dart';
 import 'pages/circles_members_page.dart';
 import 'pages/circles_new_announcement_page.dart';
 import 'pages/circles_page.dart';
+import 'pages/route_tracker.dart';
 
 // Added from codelab
 
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final routeTracker = RouteTracker();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
