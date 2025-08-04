@@ -1,12 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 String monthName(int monthNumber) {
   // Creates a dummy date on that month; 'MMMM' gives you full month name.
   return DateFormat.MMMM('en_US').format(DateTime(2021, monthNumber, 1));
 }
+
+
+Future<String> fetchname(String uid) async {
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .get();
+
+  // .get<T>() will return the field cast to T (and throw if it’s absent or wrong type)
+  // so we use `as bool?` + `?? false` to fall back gracefully.
+  return (doc.get('firstName') as String);
+}
+
 
 DateTime now = DateTime.now();
 final today = DateTime.now();
@@ -25,6 +41,8 @@ class LandingPageScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
+var name = fetchname(FirebaseAuth.instance.currentUser!.uid);
 
 class _HomeScreenState extends State<LandingPageScreen> {
   int _currentIndex = 2;
@@ -104,6 +122,8 @@ class _HomeScreenState extends State<LandingPageScreen> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -141,10 +161,10 @@ class _HomeScreenState extends State<LandingPageScreen> {
             height: 84,
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Good Morning,\n Yechan(Paul)',
-              style: TextStyle(
+              "Good Morning, $name",
+              style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Inter',
