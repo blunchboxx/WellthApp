@@ -178,10 +178,19 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       setState(() {
                                                         selectedImagePath = 'assets/temp-pfp-1.png';
                                                       });
+
+                                                      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+                                                      await FirebaseFirestore.instance
+                                                        .collection('users')
+                                                        .doc(uid)
+                                                        .update({
+                                                          'selectedImagePath': selectedImagePath,
+                                                        });
                                                       Navigator.pop(context);
                                                     },
                                                     child: Image.asset(
@@ -191,10 +200,18 @@ class _OnboardingScreen_bio extends State<OnboardingScreen_bio>{
                                                     ),
                                                   ),
                                                   GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async{
                                                       setState(() {
                                                         selectedImagePath = 'assets/temp-pfp-2.png';
                                                       });
+                                                      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+                                                      await FirebaseFirestore.instance
+                                                        .collection('users')
+                                                        .doc(uid)
+                                                        .update({
+                                                          'selectedImagePath': selectedImagePath,
+                                                        });
                                                       Navigator.pop(context);
                                                     },
                                                     child: Image.asset(
