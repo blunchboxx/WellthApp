@@ -20,8 +20,12 @@ Future<String> fetchname(String uid) async {
 
   // .get<T>() will return the field cast to T (and throw if it’s absent or wrong type)
   // so we use `as bool?` + `?? false` to fall back gracefully.
+
+  debugPrint('fetchname: $uid, ${doc.data()}');
   return (doc.get('firstName') as String);
 }
+
+
 
 
 DateTime now = DateTime.now();
@@ -42,9 +46,24 @@ class LandingPageScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-var name = fetchname(FirebaseAuth.instance.currentUser!.uid);
 
 class _HomeScreenState extends State<LandingPageScreen> {
+
+
+   String _name = '';
+  bool _loadingName = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    fetchname(uid).then((fetchedName) {
+      setState(() {
+        _name = fetchedName;
+        _loadingName = false;
+      });
+    });
+  }
   int _currentIndex = 2;
   // Growable list of tasks
   List<Task> quests = List<Task>.from([
@@ -163,7 +182,7 @@ class _HomeScreenState extends State<LandingPageScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              "Good Morning, $name",
+              "Good Morning, $_name",
               style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w500,
