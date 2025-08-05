@@ -127,11 +127,18 @@ serviceCircleExploreFetchTop30Circle() async {
 
     // 4) created
     final rawCreated = data['createdAt'];
-    final createdDateTime = rawCreated is Timestamp
-        ? rawCreated.toDate()
-        : DateTime.parse(
-            (rawCreated as Map<String, dynamic>)['timestampValue'] as String,
-          );
+    late final DateTime createdDateTime;
+    if (rawCreated is Timestamp) {
+      createdDateTime = rawCreated.toDate();
+    } else if (rawCreated is Map<String, dynamic>) {
+      // This case is for Firestore structured timestamp map (e.g. via REST API)
+      createdDateTime = DateTime.parse(rawCreated['timestampValue'] as String);
+    } else if (rawCreated is String) {
+      // ISO 8601 string stored directly
+      createdDateTime = DateTime.parse(rawCreated);
+    } else {
+      throw Exception('Unexpected type for createdAt: ${rawCreated.runtimeType}');
+    }
     final created = createdDateTime.toIso8601String();
 
     // 5) admins
@@ -143,6 +150,7 @@ serviceCircleExploreFetchTop30Circle() async {
       final role = (entry as Map<String, dynamic>)['stringValue'] as String?;
       if (role == 'admin') adminList.add(userId);
     });
+    
     final admins = adminList.join(', ');
 
     return {
