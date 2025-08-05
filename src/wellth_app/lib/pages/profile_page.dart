@@ -7,9 +7,6 @@ import 'package:wellth_app/pages/onboarding_page_bio.dart';
 
 class ProfileScreen extends StatefulWidget {
 
-  final String? profilePicturePath;
-
-  ProfileScreen({this.profilePicturePath});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -38,13 +35,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Map<String, dynamic>? userData;
   
-  //final String profilePicturePath = 'assets/temp-pfp-1.png'; // Placeholder for profile picture
-  late final String profilePicturePath;
+
   
   @override
   void initState() {
     super.initState();
-    profilePicturePath = widget.profilePicturePath ?? 'assets/onboarding-add-pfp.png';
     fetchCurrentUser();
     loadUserCircles();
   }
@@ -227,7 +222,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: BoxShape.circle,
                   border: Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 1), // Outline color & thickness
                   image: DecorationImage(
-                    image: AssetImage(profilePicturePath),
+                    image: AssetImage(userData?['selectedImagePath'] ?? 'assets/onboarding-add-pfp.png'
+),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -342,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(34),
-                              child: Image.asset(profilePicturePath, fit: BoxFit.cover),
+                              child: Image.asset(userData?['selectedImagePath'] ?? 'assets/onboarding-add-pfp.png', fit: BoxFit.cover),
                             ),
                           ),
                         ),

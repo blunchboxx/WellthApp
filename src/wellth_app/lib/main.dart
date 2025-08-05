@@ -149,7 +149,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => LandingPageScreen());
 
           case '/userProfile':
-            return MaterialPageRoute(builder: (_) => ProfileScreen(profilePicturePath: globalProfileImagePath));
+            return MaterialPageRoute(builder: (_) => ProfileScreen());
 
           case '/circlesAnnouncementDetail':
             if (args == null) {
