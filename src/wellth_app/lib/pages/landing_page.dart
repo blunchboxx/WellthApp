@@ -22,7 +22,15 @@ Future<String> fetchname(String uid) async {
   // so we use `as bool?` + `?? false` to fall back gracefully.
 
   debugPrint('fetchname: $uid, ${doc.data()}');
-  return (doc.get('firstName') as String);
+
+  var name = doc.data()?['name'] as String? ?? 'User';
+
+  if(name.isEmpty) {
+    name = 'User';
+  }
+
+  
+  return (name);
 }
 
 
